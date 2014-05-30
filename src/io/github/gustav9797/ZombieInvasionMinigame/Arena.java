@@ -156,7 +156,7 @@ public abstract class Arena implements Listener
 	{
 		for (Player p : players)
 		{
-			p.sendMessage("[ZombieInvasion] " + message);
+			p.sendMessage("[&9ZombieInvasion] " + message);
 		}
 	}
 

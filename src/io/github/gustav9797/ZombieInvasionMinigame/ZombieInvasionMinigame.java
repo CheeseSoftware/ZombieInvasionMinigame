@@ -48,6 +48,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -581,6 +582,12 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		Field field = clazz.getDeclaredField(f);
 		field.setAccessible(true);
 		return field.get(null);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	private void onServerListPing(ServerListPingEvent event)
+	{
+		event.setMotd(arena.isRunning() ? "In-Game" : "Voting");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
