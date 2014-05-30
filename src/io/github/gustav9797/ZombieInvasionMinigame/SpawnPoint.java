@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasion;
+package io.github.gustav9797.ZombieInvasionMinigame;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

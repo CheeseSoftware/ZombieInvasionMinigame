@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasion.PathfinderGoal;
+package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import java.util.Random;
 

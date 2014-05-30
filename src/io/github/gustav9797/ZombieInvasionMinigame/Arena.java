@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasion;
+package io.github.gustav9797.ZombieInvasionMinigame;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +78,6 @@ public abstract class Arena implements Listener
 	// HashMap<Player, ItemStack[]>();
 	public ArenaScoreboard scoreboard;
 	protected ArrayList<BorderBlock> border;
-	protected Lobby lobby;
 	protected YamlConfiguration config;
 	protected File configFile;
 	protected File borderConfigFile;
@@ -86,23 +85,22 @@ public abstract class Arena implements Listener
 	protected File directory;
 	protected File zombieSpawnPointsConfigFile;
 
-	public Arena(String name, Lobby lobby)
+	public Arena(String name)
 	{
-		this.lobby = lobby;
 		this.name = name;
 		this.schematicFileName = name;
 		this.border = new ArrayList<BorderBlock>();
 		this.middle = new Location(Bukkit.getServer().getWorlds().get(0), 0, 0, 0);
 		this.spawnLocation = middle;
-		this.directory = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + name);
+		this.directory = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + name);
 		if (!directory.exists())
 			directory.mkdir();
-		this.configFile = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + name + File.separator + "config.yml");
-		this.borderConfigFile = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + name + File.separator + "border.yml");
-		this.potionregionConfigFile = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + name + File.separator + "potionregions.yml");
-		this.zombieSpawnPointsConfigFile = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + name + File.separator + "zombiespawnpoints.yml");
+		this.configFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + name + File.separator + "config.yml");
+		this.borderConfigFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + name + File.separator + "border.yml");
+		this.potionregionConfigFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + name + File.separator + "potionregions.yml");
+		this.zombieSpawnPointsConfigFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + name + File.separator + "zombiespawnpoints.yml");
 
-		this.staticTickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasion.getPlugin(), new Runnable()
+		this.staticTickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
 			public void run()
@@ -181,7 +179,7 @@ public abstract class Arena implements Listener
 		//topY = 256;
 		int groundLevel = 4;
 		EditSession session = new EditSession(new BukkitWorld(middle.getWorld()), 999999999);
-		File schematic = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.schematicFileName + ".schematic");
+		File schematic = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.schematicFileName + ".schematic");
 		CuboidClipboard clipboard = new CuboidClipboard(new com.sk89q.worldedit.Vector(this.getSize() - 1, topY, this.getSize() - 1), new com.sk89q.worldedit.Vector(middle.getBlockX() - getRadius()
 				+ 1, groundLevel, middle.getBlockZ() - getRadius() + 1));
 		clipboard.copy(session);
@@ -199,7 +197,7 @@ public abstract class Arena implements Listener
 	{
 		EditSession es = new EditSession(new BukkitWorld(middle.getWorld()), 999999999);
 		es.enableQueue();
-		File schematic = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.schematicFileName + ".schematic");
+		File schematic = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.schematicFileName + ".schematic");
 		int groundLevel = 4;
 		if (schematic.exists())
 		{
@@ -274,9 +272,10 @@ public abstract class Arena implements Listener
 	private void Restart(String message)
 	{
 		Broadcast(message);
-		this.Reset();
-		this.LoadMap();
-		this.TryStart();
+		Reset();
+		for(Player player : players)
+			ZombieInvasionMinigame.ConnectPlayer(player, "S150");
+		Bukkit.getServer().shutdown();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -436,15 +435,15 @@ public abstract class Arena implements Listener
 		{
 			config.load(configFile);
 			String world = config.getString("world");
-			if (world != null && ZombieInvasion.getPlugin().getServer().getWorld(world) != null && config.getVector("location") != null)
+			if (world != null && ZombieInvasionMinigame.getPlugin().getServer().getWorld(world) != null && config.getVector("location") != null)
 			{
 				this.size = config.getInt("size");
 				this.startAtPlayerCount = config.getInt("startAtPlayerCount");
 				this.maxPlayers = config.getInt("maxPlayers");
 				this.secondsAfterStart = config.getInt("secondsAfterStart");
-				this.middle = config.getVector("location").toLocation(ZombieInvasion.getPlugin().getServer().getWorld(world));
+				this.middle = config.getVector("location").toLocation(ZombieInvasionMinigame.getPlugin().getServer().getWorld(world));
 				Vector spawnPos = config.getVector("spawnLocation");
-				this.spawnLocation = spawnPos.toLocation(ZombieInvasion.getPlugin().getServer().getWorld(world), (float) config.getDouble("spawnLocationYaw"),
+				this.spawnLocation = spawnPos.toLocation(ZombieInvasionMinigame.getPlugin().getServer().getWorld(world), (float) config.getDouble("spawnLocationYaw"),
 						(float) config.getDouble("SpawnLocationPitch"));
 				this.schematicFileName = config.getString("schematicFileName");
 			}
@@ -526,7 +525,7 @@ public abstract class Arena implements Listener
 		if (this.tickTaskId != -1)
 			Bukkit.getScheduler().cancelTask(tickTaskId);
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		this.tickTaskId = scheduler.scheduleSyncRepeatingTask(ZombieInvasion.getPlugin(), new Runnable()
+		this.tickTaskId = scheduler.scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
 			public void run()
@@ -762,7 +761,7 @@ public abstract class Arena implements Listener
 				if (this.sendWavesTaskId != -1)
 					Bukkit.getServer().getScheduler().cancelTask(this.sendWavesTaskId);
 				BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-				this.sendWavesTaskId = scheduler.scheduleSyncDelayedTask(ZombieInvasion.getPlugin(), new Runnable()
+				this.sendWavesTaskId = scheduler.scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 				{
 					@Override
 					public void run()
@@ -792,13 +791,12 @@ public abstract class Arena implements Listener
 	{
 		while (players.contains(player))
 			players.remove(player);
-		player.setMetadata("arena", new FixedMetadataValue(ZombieInvasion.getPlugin(), this.name));
-		ZombieInvasion.getEconomyPlugin().ResetStats(player);
+		player.setMetadata("arena", new FixedMetadataValue(ZombieInvasionMinigame.getPlugin(), this.name));
+		ZombieInvasionMinigame.getEconomyPlugin().ResetStats(player);
 		players.add(player);
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setHealth((double) 20);
 		player.setFoodLevel(20);
-		lobby.UpdateSigns();
 		scoreboard.AddPlayerScoreboard(player);
 		this.TeleportPlayerToRandomPlayer(player);
 
@@ -819,10 +817,8 @@ public abstract class Arena implements Listener
 	{
 		while (players.contains(player))
 			players.remove(player);
-		player.removeMetadata("arena", ZombieInvasion.getPlugin());
-		player.teleport(lobby.getLocation());
+		player.removeMetadata("arena", ZombieInvasionMinigame.getPlugin());
 		scoreboard.RemovePlayerScoreboard(player);
-		lobby.UpdateSigns();
 		RemoveSpectator(player);
 		CheckSpectators();
 		if (players.size() <= 0)
@@ -833,6 +829,7 @@ public abstract class Arena implements Listener
 		player.getInventory().clear();
 		player.updateInventory();
 		this.Broadcast(player.getName() + " has " + reason + "!");
+		ZombieInvasionMinigame.ConnectPlayer(player, "S150");
 	}
 
 	public void onPlayerQuit(PlayerQuitEvent event)
@@ -852,7 +849,7 @@ public abstract class Arena implements Listener
 			if (this.isRunning() && !this.isStarting())
 			{
 				if (this.spectators.size() >= this.players.size() - 1)
-					Restart("Everyone have died. Reseting arena...");
+					Restart("Everyone have died. Restarting..");
 				else
 					this.MakeSpectator(player);
 			}

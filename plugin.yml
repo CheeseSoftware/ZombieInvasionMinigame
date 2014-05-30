@@ -1,7 +1,9 @@
-name: ZombieInvasion
-main: io.github.gustav9797.ZombieInvasion.ZombieInvasion
+name: ZombieInvasionMinigame
+main: io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame
 version: 0.1
+depend: [GlobalPlugins]
 softdepend: [OstEconomyPlugin, WorldEdit]
+load: POSTWORLD
 commands:
    listarenas:
       description: Lists the loaded arenas.

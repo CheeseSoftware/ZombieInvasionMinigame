@@ -1,8 +1,8 @@
-package io.github.gustav9797.ZombieInvasion.Entity;
+package io.github.gustav9797.ZombieInvasionMinigame.Entity;
 
-import io.github.gustav9797.ZombieInvasion.Arena;
-import io.github.gustav9797.ZombieInvasion.PathfinderGoal.PathfinderGoalFindBreakBlock;
-import io.github.gustav9797.ZombieInvasion.PathfinderGoal.PathfinderGoalWalkToTile;
+import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalFindBreakBlock;
+import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalWalkToTile;
 
 import java.lang.reflect.Field;
 import java.util.Random;

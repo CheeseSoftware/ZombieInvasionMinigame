@@ -1,9 +1,9 @@
-package io.github.gustav9797.ZombieInvasion;
+package io.github.gustav9797.ZombieInvasionMinigame;
 
-import io.github.gustav9797.ZombieInvasion.Entity.EntityBlockBreakingSkeleton;
-import io.github.gustav9797.ZombieInvasion.Entity.EntityBlockBreakingVillager;
-import io.github.gustav9797.ZombieInvasion.Entity.EntityBlockBreakingZombie;
-import io.github.gustav9797.ZombieInvasion.Entity.ICustomMonster;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingSkeleton;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingVillager;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingZombie;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.ICustomMonster;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,9 +51,9 @@ public class ZombieArena extends Arena
 	protected int skeletonsToSpawn = 0;
 	protected int villagersToSpawn = 0;
 
-	public ZombieArena(String name, Lobby lobby)
+	public ZombieArena(String name)
 	{
-		super(name, lobby);
+		super(name);
 		spawnPointManager = new SpawnPointManager(this);
 	}
 
@@ -93,7 +93,7 @@ public class ZombieArena extends Arena
 
 			spawnPosition.setY(spawnPosition.getBlockY() + 2);
 
-			new SpawnMonsterTask(spawnPoint, this).runTaskLater(ZombieInvasion.getPlugin(), delay);
+			new SpawnMonsterTask(spawnPoint, this).runTaskLater(ZombieInvasionMinigame.getPlugin(), delay);
 
 			delay += this.ticksBetweenZombieSpawns;
 		}
@@ -272,7 +272,7 @@ public class ZombieArena extends Arena
 	public void SendWaves()
 	{
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		this.sendWavesTaskId = scheduler.scheduleSyncRepeatingTask(ZombieInvasion.getPlugin(), new Runnable()
+		this.sendWavesTaskId = scheduler.scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
 			public void run()

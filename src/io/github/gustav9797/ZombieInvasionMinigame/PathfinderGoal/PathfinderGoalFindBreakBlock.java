@@ -1,6 +1,6 @@
-package io.github.gustav9797.ZombieInvasion.PathfinderGoal;
+package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
-import io.github.gustav9797.ZombieInvasion.Arena;
+import io.github.gustav9797.ZombieInvasionMinigame.Arena;
 
 import java.util.ArrayList;
 import java.util.Arrays;

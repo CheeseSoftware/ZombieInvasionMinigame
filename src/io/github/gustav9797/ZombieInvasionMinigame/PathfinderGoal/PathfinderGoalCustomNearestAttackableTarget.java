@@ -1,8 +1,8 @@
-package io.github.gustav9797.ZombieInvasion.PathfinderGoal;
+package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import java.util.Random;
 
-import io.github.gustav9797.ZombieInvasion.Arena;
+import io.github.gustav9797.ZombieInvasionMinigame.Arena;
 
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;

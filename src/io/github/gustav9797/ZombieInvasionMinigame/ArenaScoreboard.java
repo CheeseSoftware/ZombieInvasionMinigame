@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasion;
+package io.github.gustav9797.ZombieInvasionMinigame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class ArenaScoreboard
 	public ArenaScoreboard(Arena arena)
 	{
 		this.arena = arena;
-		this.tickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasion.getPlugin(), new Runnable()
+		this.tickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
 			public void run()
@@ -38,7 +38,7 @@ public class ArenaScoreboard
 	@SuppressWarnings("deprecation")
 	private void UpdatePlayerInfo()
 	{
-		OstEconomyPlugin economy = (OstEconomyPlugin) ZombieInvasion.getEconomyPlugin();
+		OstEconomyPlugin economy = (OstEconomyPlugin) ZombieInvasionMinigame.getEconomyPlugin();
 		List<Player> players = new ArrayList<Player>(arena.players);
 		for (Player player : players)
 		{

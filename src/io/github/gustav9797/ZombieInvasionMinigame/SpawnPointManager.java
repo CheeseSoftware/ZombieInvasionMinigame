@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasion;
+package io.github.gustav9797.ZombieInvasionMinigame;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class SpawnPointManager
 
 	public SpawnPointManager(Arena arena)
 	{
-		configFile = new File(ZombieInvasion.getPlugin().getDataFolder() + File.separator + arena.name + File.separator + "spawnpoints.yml");
+		configFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + arena.name + File.separator + "spawnpoints.yml");
 		if (!configFile.exists())
 		{
 			try
