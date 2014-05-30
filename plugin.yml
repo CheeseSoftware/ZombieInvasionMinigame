@@ -1,0 +1,50 @@
+name: ZombieInvasion
+main: io.github.gustav9797.ZombieInvasion.ZombieInvasion
+version: 0.1
+softdepend: [OstEconomyPlugin, WorldEdit]
+commands:
+   listarenas:
+      description: Lists the loaded arenas.
+      permission: zombieinvasion.listarenas
+      permission-message: You don't have zombieinvasion.listarenas
+   createarena:
+      description: Creates an arena.
+      permission: zombieinvasion.createarena
+      permission-message: You don't have zombieinvasion.createarena
+   removearena:
+      description: Removed an arena.
+      permission: zombieinvasion.removearena
+      permission-message: You don't have zombieinvasion.removearena
+   joinarena:
+      description: Joins the specified arena.
+      permission: zombieinvasion.joinarena
+      permission-message: You don't have zombieinvasion.joinarena
+   leave:
+      description: Leaves your current arena.
+      permission: zombieinvasion.leave
+      permission-message: You don't have zombieinvasion.leave
+   zombie:
+      description: Spawns custom zombie.
+      permission: zombieinvasion.zombie
+      permission-message: You don't have zombieinvasion.zombie
+   setlobby:
+      description: Sets the lobby position.
+      permission: zombieinvasion.setlobby
+      permission-message: You don't have zombieinvasion.setlobby
+   setarenaspawn:
+      description: Sets the arena's spawn location.
+      permission: zombieinvasion.setarenaspawn
+      permission-message: You don't have zombieinvasion.setarenaspawn
+   reloadzombieinvasion:
+      description: Sets the arena's spawn location.
+      permission: zombieinvasion.setarenaspawn
+      permission-message: You don't have zombieinvasion.setarenaspawn
+   selectarena:
+      description: Selects an arena for edit.
+      permission: zombieinvasion.selectarena
+      permission-message: You don't have zombieinvasion.selectarena
+   editarena:
+      description: Has many commands for editing the arena.
+      permission: zombieinvasion.editarena
+      permission-message: You don't have zombieinvasion.editarena
+      
