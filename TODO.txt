@@ -1,0 +1,10 @@
+Add 60 second lobby
+Disable joining once game has started
+Allow 10 seconds after game has stopped to restart
+Spectators should not take damage
+Change prefix to &9ZombieInvasion &8|| &a
+
+When in lobby, set Motd to "Voting"
+When ingame, set motd to "In-Game"
+ORR
+The map name, like "House"
