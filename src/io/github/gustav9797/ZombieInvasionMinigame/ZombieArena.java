@@ -32,8 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-
 public class ZombieArena extends Arena
 {
 	protected Map<UUID, EntityCreature> monsters = new HashMap<UUID, EntityCreature>();

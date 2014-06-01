@@ -48,12 +48,27 @@ public class SpawnPoint implements Cloneable, ConfigurationSerializable
 	{
 		if(this.entityTypeWhitelist.size() <= 0)
 			return true;
+		boolean isMonster = false;
 		for (EntityType e : this.entityTypeWhitelist)
 		{
-			if (e.equals(entityType))
-				return true;
+			if (e.equals(EntityType.ZOMBIE))
+			{
+				isMonster = true;
+				break;
+			}
 		}
-		return false;
+		
+		if(entityType == EntityType.PLAYER)
+		{
+			if(isMonster)
+				return false;
+			for (EntityType e : this.entityTypeWhitelist)
+			{
+				if (e.equals(EntityType.PLAYER))
+					return true;
+			}
+		}
+		return true;
 	}
 
 	public List<EntityType> getEntityTypes()

@@ -408,7 +408,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 							}
 						}
 						else
-							sender.sendMessage("Usage: /editarena addspawnpointentity <id> <entityType> <chance>");
+							sender.sendMessage("Usage: /editarena whitelistentity <id> <entityType> <chance>");
 					}
 					else if (args[0].equals("showspawnpoints"))
 					{
