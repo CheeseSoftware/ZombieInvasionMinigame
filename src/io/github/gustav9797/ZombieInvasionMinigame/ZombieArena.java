@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.server.v1_7_R3.EntityCreature;
@@ -23,17 +24,24 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftZombie;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 
 public class ZombieArena extends Arena
 {
 	protected Map<UUID, EntityCreature> monsters = new HashMap<UUID, EntityCreature>();
 	protected List<SpawnPoint> monsterSpawnList = new ArrayList<SpawnPoint>();
 	protected SpawnPointManager spawnPointManager;
+	protected Random random = new Random();
+	protected Material[][] armorTypes = new Material[5][4];
+	
 	protected int currentWave = 0;
 	protected int ticksUntilNextWave = -1;
 	protected int sendWavesTaskId = -1;
@@ -55,6 +63,31 @@ public class ZombieArena extends Arena
 	{
 		super(name);
 		spawnPointManager = new SpawnPointManager(this);
+		
+		armorTypes[0][0] = Material.LEATHER_HELMET;
+		armorTypes[0][1] = Material.LEATHER_CHESTPLATE;
+		armorTypes[0][2] = Material.LEATHER_LEGGINGS;
+		armorTypes[0][3] = Material.LEATHER_BOOTS;
+		
+		armorTypes[1][0] = Material.GOLD_HELMET;
+		armorTypes[1][1] = Material.GOLD_CHESTPLATE;
+		armorTypes[1][2] = Material.GOLD_LEGGINGS;
+		armorTypes[1][3] = Material.GOLD_BOOTS;
+		
+		armorTypes[2][0] = Material.CHAINMAIL_HELMET;
+		armorTypes[2][1] = Material.CHAINMAIL_CHESTPLATE;
+		armorTypes[2][2] = Material.CHAINMAIL_LEGGINGS;
+		armorTypes[2][3] = Material.CHAINMAIL_BOOTS;
+		
+		armorTypes[3][0] = Material.IRON_HELMET;
+		armorTypes[3][1] = Material.IRON_CHESTPLATE;
+		armorTypes[3][2] = Material.IRON_LEGGINGS;
+		armorTypes[3][3] = Material.IRON_BOOTS;
+		
+		armorTypes[4][0] = Material.DIAMOND_HELMET;
+		armorTypes[4][1] = Material.DIAMOND_CHESTPLATE;
+		armorTypes[4][2] = Material.DIAMOND_LEGGINGS;
+		armorTypes[4][3] = Material.DIAMOND_BOOTS;
 	}
 
 	@Override
@@ -134,7 +167,14 @@ public class ZombieArena extends Arena
 						case ZOMBIE:
 							if (this.getCurrentWave() < 10 && zombiesToSpawn > 0 || (villagersToSpawn == 0 && skeletonsToSpawn == 0))
 							{
-								monster = new EntityBlockBreakingZombie(mcWorld);
+								EntityBlockBreakingZombie m = new EntityBlockBreakingZombie(mcWorld);
+								monster = m;
+								
+								((CraftZombie)monster.getBukkitEntity()).getEquipment().setHelmet(new ItemStack(getArmorType(0)));
+								((CraftZombie)monster.getBukkitEntity()).getEquipment().setChestplate(new ItemStack(getArmorType(1)));
+								((CraftZombie)monster.getBukkitEntity()).getEquipment().setLeggings(new ItemStack(getArmorType(2)));
+								((CraftZombie)monster.getBukkitEntity()).getEquipment().setBoots(new ItemStack(getArmorType(3)));
+								
 								zombiesToSpawn--;
 							}
 							else if (villagersToSpawn > 0)
@@ -191,6 +231,15 @@ public class ZombieArena extends Arena
 		// y = ax² + bx + c
 		// y = (25x² + 205x + 330)/28
 		// y = 25x²/28 + 205x/28 + 165x/14
+		// Wave 1: 20
+		// Wave >= 9: 150
+		
+		// Lower amount of zombie in boss fights.
+		//if (wave%10 == 0)
+		//	return 50;
+		
+		if (wave >= 10)
+			return 150;
 
 		int x = wave % 10;
 		float a = 25 / 28;
@@ -198,19 +247,26 @@ public class ZombieArena extends Arena
 		float c = 165 / 14;
 
 		return (int) Math.floor(a * x * x + b * x + c);
-
-		/*
-		 * int amount = this.zombieStartAmount; int increase =
-		 * this.zombieAmountIncrease; int virtualWave = wave%10;
-		 * 
-		 * amount += virtualWave*(virtualWave - 1)/2; // ^^ Siffertriangel, -1
-		 * betyder att det startar på 0, /2 betyder att det är en triangel.
-		 * 
-		 * amount += virtualWave*increase; // ^^ det ökar också med "increase"
-		 * på varje wave
-		 * 
-		 * return amount;
-		 */
+	}
+	
+	private Material getArmorType(int type)
+	{
+		int armorLevel = currentWave/2;
+		
+		armorLevel = (armorLevel > 7)? 7:armorLevel;
+		
+		int armorType2 = random.nextInt(7) - random.nextInt(3);
+		
+		if (armorType2 > 5 && armorType2 < armorLevel)
+			armorType2 = 2*armorType2 - armorType2;
+		
+		if (armorType2 < 0)
+			return Material.AIR;
+		
+		if (armorType2 > armorLevel)
+			return Material.AIR;
+		
+		return armorTypes[armorType2][type];
 	}
 
 	public int getCurrentWave()
@@ -231,8 +287,9 @@ public class ZombieArena extends Arena
 
 		if (currentWave > 10)
 		{
-			skeletonsToSpawn = amount / 20;
-			villagersToSpawn = amount - skeletonsToSpawn;
+			skeletonsToSpawn = amount / 5;
+			villagersToSpawn = amount / 2;
+			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else if (currentWave >= 5)
 		{
