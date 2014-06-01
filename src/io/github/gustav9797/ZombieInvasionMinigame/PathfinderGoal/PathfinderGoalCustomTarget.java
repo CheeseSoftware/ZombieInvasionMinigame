@@ -95,7 +95,7 @@ public abstract class PathfinderGoalCustomTarget extends PathfinderGoal
 
 	public void d() // finish
 	{
-		this.entity.setGoalTarget((EntityLiving) null);
+		//this.entity.setGoalTarget((EntityLiving) null);
 	}
 	
 	public void e() // move

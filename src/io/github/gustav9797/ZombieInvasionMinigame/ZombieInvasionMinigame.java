@@ -117,8 +117,11 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		arena.LoadMap();
 		for (Player player : arena.players)
 		{
-			player.removeMetadata("arena", this);
-			ConnectPlayer(player, "S150");
+			if (player.isOnline())
+			{
+				player.removeMetadata("arena", this);
+				ConnectPlayer(player, "S150");
+			}
 		}
 	}
 
@@ -128,7 +131,21 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			if (cmd.getName().equals("listarenas"))
+			if (cmd.getName().equals("zombieinvasion"))
+			{
+				player.sendMessage("ZombieInvasion version: " + this.getDescription().getVersion());
+				return true;
+			}
+			else if (cmd.getName().equals("zombie"))
+			{
+				net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.arena.getMiddle().getWorld()).getHandle();
+				EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
+				((EntityBlockBreakingZombie)monster).setArena(this.arena);
+				monster.getBukkitEntity().teleport(player.getLocation());
+				mcWorld.addEntity(monster, SpawnReason.CUSTOM);		
+				return true;
+			}
+			else if (cmd.getName().equals("listarenas"))
 			{
 				String output = arena.name;
 				player.sendMessage("Arena: " + output);
@@ -169,7 +186,12 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 					if (args[0].equals("startwave"))
 					{
 						arena.SendWaves();
-						this.getServer().broadcastMessage("Waves are coming! Hide!");
+						arena.Broadcast("Waves are coming! Hide!");
+					}
+					else if (args[0].equals("maintenace"))
+					{
+						arena.StopAllActivity();
+						sender.sendMessage("Maintenace mode");
 					}
 					else if (args[0].equals("setlocation"))
 					{
@@ -583,16 +605,17 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		field.setAccessible(true);
 		return field.get(null);
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onServerListPing(ServerListPingEvent event)
 	{
-		event.setMotd(arena.isRunning() ? "In-Game" : "Voting");
+		event.setMotd(arena == null ? "Loading" : (arena.isRunning() ? "In-Game" : "Ready!"));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onCreatureSpawn(CreatureSpawnEvent event)
 	{
+		event.setCancelled(false);
 		if (event.getSpawnReason() == SpawnReason.CUSTOM)
 			return;
 		else if (event.getSpawnReason() == SpawnReason.BUILD_SNOWMAN)
@@ -671,6 +694,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onPlayerInteract(PlayerInteractEvent event)
 	{
+		event.setCancelled(false);
 		arena.onPlayerInteract(event);
 	}
 

@@ -67,7 +67,7 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 	public void setArena(Arena arena)
 	{
 		if (arena != null)
-			this.targetSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, arena.getSpawnLocation()));
+			this.goalSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, arena.getSpawnLocation()));
 		
 		if (random.nextInt(8) == 0)
 		{
@@ -81,7 +81,7 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, arena));
 		}
 		
-		this.targetSelector.a(0, new PathfinderGoalCustomNearestAttackableTarget(this, 0, arena));
+		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, arena));
 	}
 
 	@Override

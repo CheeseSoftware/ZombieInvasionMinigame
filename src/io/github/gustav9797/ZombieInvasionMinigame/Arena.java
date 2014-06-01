@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,6 +71,7 @@ public abstract class Arena implements Listener
 	protected int maxPlayers = 10;
 	protected int startAtPlayerCount = 1;
 	protected int secondsAfterStart = 20;
+	protected int secondsWaitFirstTimeStart = 60;
 	protected List<PotionRegion> potionRegions = new ArrayList<PotionRegion>();
 
 	public List<Player> players = new ArrayList<Player>();
@@ -156,8 +158,19 @@ public abstract class Arena implements Listener
 	{
 		for (Player p : players)
 		{
-			p.sendMessage("[&9ZombieInvasion] " + message);
+			p.sendMessage(ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] " + message);
 		}
+	}
+	
+	public void StopAllActivity()
+	{
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		if (this.tickTaskId != -1)
+			scheduler.cancelTask(tickTaskId);
+		if (this.sendWavesTaskId != -1)
+			scheduler.cancelTask(sendWavesTaskId);
+		if (this.staticTickTaskId != -1)
+			scheduler.cancelTask(staticTickTaskId);
 	}
 
 	public void setSchematic(String name)
@@ -757,7 +770,7 @@ public abstract class Arena implements Listener
 		{
 			if (players.size() >= this.startAtPlayerCount)
 			{
-				this.Broadcast("Waves are coming in " + this.secondsAfterStart + " seconds!");
+				this.Broadcast("Waves are coming in " + this.secondsWaitFirstTimeStart + " seconds!");
 				if (this.sendWavesTaskId != -1)
 					Bukkit.getServer().getScheduler().cancelTask(this.sendWavesTaskId);
 				BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -770,7 +783,7 @@ public abstract class Arena implements Listener
 						Bukkit.getScheduler().cancelTask(sendWavesTaskId);
 						sendWavesTaskId = -1;
 					}
-				}, 20 * this.secondsAfterStart);
+				}, 20 * this.secondsWaitFirstTimeStart);
 			}
 		}
 	}

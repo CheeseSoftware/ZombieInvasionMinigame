@@ -33,7 +33,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 		{
 			return false;
 		}
-		else if (arena != null && this.entity.getGoalTarget() == null)
+		else if (arena != null && (this.entity.getGoalTarget() == null || (this.entity.getGoalTarget().getBukkitEntity() instanceof Player &&  arena.isSpectator((Player)this.entity.getGoalTarget().getBukkitEntity()))))
 		//else if(this.entity.getGoalTarget() == null)
 		{
 			// this.target = (EntityLiving) list.get(0);
@@ -43,7 +43,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 			for(Player player : arena.players)
 			{
 				double distance = player.getLocation().distance(this.entity.getBukkitEntity().getLocation());
-				if(distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL)
+				if(distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL && (arena == null || !arena.isSpectator(player)))
 				{
 					closestPlayerDistance = distance;
 					closestPlayer = player;

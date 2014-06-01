@@ -2,6 +2,8 @@ package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import java.util.Random;
 
+import org.bukkit.Location;
+
 import net.minecraft.server.v1_7_R3.DamageSource;
 import net.minecraft.server.v1_7_R3.Entity;
 import net.minecraft.server.v1_7_R3.EntityCreature;
@@ -23,11 +25,15 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 	@SuppressWarnings("rawtypes")
 	Class g;
 	private int h;
-	private double i;
-	private double j;
-	private double k;
-	private int ticksPassed = 0;
+	private double locX;
+	private double locY;
+	private double locZ;
+	// private int ticksPassed = 0;
+	// private int ticksMin = 40;
 	private Random r = new Random();
+
+	private Location targetLocation = null;
+	private Location targetOldLocation = null;
 
 	@SuppressWarnings("rawtypes")
 	public PathfinderGoalCustomMeleeAttack(EntityCreature entitycreature, Class oclass, double d0, boolean flag)
@@ -45,37 +51,53 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 		this.a(3);
 	}
 
+	private boolean hasTarget()
+	{
+		return this.entityCreature.getGoalTarget() != null && this.entityCreature.getGoalTarget().isAlive();
+	}
+
+	private boolean hasTargetMoved()
+	{
+		return this.targetLocation == null || this.targetOldLocation == null || this.targetLocation.getBlockX() != this.targetOldLocation.getBlockX() || this.targetLocation.getBlockY() != this.targetOldLocation.getBlockY()
+				|| this.targetLocation.getBlockZ() != this.targetOldLocation.getBlockZ();
+	}
+
+	private boolean hasPathToWalk()
+	{
+		boolean bla = !this.entityCreature.getNavigation().g();
+		return bla; // hasEnded() eller
+					// något
+	}
+
 	@SuppressWarnings("unchecked")
 	public boolean a()
 	{
-		EntityLiving entityliving = this.entityCreature.getGoalTarget();
+		if (!this.hasPathToWalk())
+		{
+			EntityLiving entityliving = this.entityCreature.getGoalTarget();
 
-		if (entityliving == null)
-		{
-			return false;
-		}
-		else if (!entityliving.isAlive())
-		{
-			return false;
-		}
-		else if (this.g != null && !this.g.isAssignableFrom(entityliving.getClass()))
-		{
-			return false;
-		}
-		else
-		{
-			this.ticksPassed++;
-			if (this.ticksPassed >= 20)
+			if (entityliving == null)
+			{
+				return false;
+			}
+			else if (!entityliving.isAlive())
+			{
+				return false;
+			}
+			else if (this.g != null && !this.g.isAssignableFrom(entityliving.getClass()))
+			{
+				return false;
+			}
+			else
 			{
 				this.pathEntity = this.entityCreature.getNavigation().a(entityliving);
-				this.ticksPassed = 0;
-				return this.pathEntity != null;
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
-	public boolean b()
+	public boolean b() // canContinue
 	{
 		EntityLiving entityliving = this.entityCreature.getGoalTarget();
 
@@ -83,20 +105,22 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 				MathHelper.floor(entityliving.locY), MathHelper.floor(entityliving.locZ))));
 	}
 
-	public void c()
+	public void c() // setup
 	{
 		this.entityCreature.getNavigation().a(this.pathEntity, this.d);
 		this.h = 0;
 	}
 
-	public void d()
+	public void d() // finish
 	{
-		this.entityCreature.getNavigation().h();
+		this.entityCreature.getNavigation().h(); // .end(), .stop() eller något
 	}
 
-	public void e()
+	public void e() // move
 	{
 		EntityLiving entityliving = this.entityCreature.getGoalTarget();
+		this.targetOldLocation = this.targetLocation;
+		this.targetLocation = entityliving.getBukkitEntity().getLocation();
 
 		this.entityCreature.getControllerLook().a(entityliving, 30.0F, 30.0F);
 		double d0 = this.entityCreature.e(entityliving.locX, entityliving.boundingBox.b, entityliving.locZ);
@@ -104,11 +128,11 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 
 		--this.h;
 		if ((this.e || this.entityCreature.getEntitySenses().canSee(entityliving)) && this.h <= 0
-				&& (this.i == 0.0D && this.j == 0.0D && this.k == 0.0D || entityliving.e(this.i, this.j, this.k) >= 1.0D || r.nextFloat() < 0.05F))
+				&& (this.locX == 0.0D && this.locY == 0.0D && this.locZ == 0.0D || entityliving.e(this.locX, this.locY, this.locZ) >= 1.0D || r.nextFloat() < 0.05F))
 		{
-			this.i = entityliving.locX;
-			this.j = entityliving.boundingBox.b;
-			this.k = entityliving.locZ;
+			this.locX = entityliving.locX;
+			this.locY = entityliving.boundingBox.b;
+			this.locZ = entityliving.locZ;
 			this.h = 4 + r.nextInt(7);
 			if (d0 > 1024.0D)
 			{
@@ -118,11 +142,22 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 			{
 				this.h += 5;
 			}
+			if (!this.hasTargetMoved())
+				h += 15;
 
-			if (!this.entityCreature.getNavigation().a((Entity) entityliving, this.d))
+			if (this.hasTargetMoved() || (this.hasTarget() && !this.hasPathToWalk()))
 			{
-				this.h += 15;
+				if (!this.entityCreature.getNavigation().a((Entity) entityliving, this.d))
+				{
+					this.h += 15;
+				}
 			}
+			/*
+			 * if(this.entityCreature.getBukkitEntity().getWorld().getBlockAt(this
+			 * .
+			 * entityCreature.getBukkitEntity().getLocation()).getRelative(BlockFace
+			 * .DOWN).getType() == Material.AIR) { this.h += 15; }
+			 */
 		}
 
 		this.c = Math.max(this.c - 1, 0);
