@@ -135,6 +135,7 @@ public class ZombieArena extends Arena
 	public void onPlayerDeath(PlayerDeathEvent event)
 	{
 		Player player = event.getEntity();
+		CraftZombie zombie;
 		
 		net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.getMiddle().getWorld()).getHandle();
 		EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
@@ -145,8 +146,12 @@ public class ZombieArena extends Arena
         meta3.setOwner(player.getName());
         skull.setItemMeta(meta3);
 		
-        ((CraftZombie)monster.getBukkitEntity()).getEquipment().setHelmet(
-				skull);
+        zombie = (CraftZombie)monster.getBukkitEntity();
+        
+        zombie.getEquipment().setHelmet(skull);
+        zombie.setCustomName(player.getName());
+        zombie.setCustomNameVisible(true);
+        zombie.setCanPickupItems(true);
 		
 		monster.getBukkitEntity().teleport(player.getLocation());
 		mcWorld.addEntity(monster, SpawnReason.CUSTOM);		
