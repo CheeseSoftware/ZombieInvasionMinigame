@@ -71,7 +71,7 @@ public abstract class Arena implements Listener
 	protected int maxPlayers = 10;
 	protected int startAtPlayerCount = 1;
 	protected int secondsAfterStart = 20;
-	protected int secondsWaitFirstTimeStart = 60;
+	protected int secondsWaitFirstTimeStart = 30;
 	protected List<PotionRegion> potionRegions = new ArrayList<PotionRegion>();
 
 	public List<Player> players = new ArrayList<Player>();
@@ -161,7 +161,7 @@ public abstract class Arena implements Listener
 			p.sendMessage(ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] " + message);
 		}
 	}
-	
+
 	public void StopAllActivity()
 	{
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -181,15 +181,12 @@ public abstract class Arena implements Listener
 	public void SaveMap()
 	{
 		int topY = 256;
-		/*if (!border.isEmpty())
-		{
-			for (BorderBlock borderBlock : border)
-				if (borderBlock.getLocation().getBlockY() > topY)
-					topY = borderBlock.getLocation().getBlockY();
-			topY--;
-		}
-		else*/
-		//topY = 256;
+		/*
+		 * if (!border.isEmpty()) { for (BorderBlock borderBlock : border) if
+		 * (borderBlock.getLocation().getBlockY() > topY) topY =
+		 * borderBlock.getLocation().getBlockY(); topY--; } else
+		 */
+		// topY = 256;
 		int groundLevel = 4;
 		EditSession session = new EditSession(new BukkitWorld(middle.getWorld()), 999999999);
 		File schematic = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.schematicFileName + ".schematic");
@@ -263,12 +260,26 @@ public abstract class Arena implements Listener
 		{
 			this.SetAlive(player);
 			player.teleport(spawnLocation);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION,20*30,2));			//30s absorption 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,20*30,2));	//30s damage resistance 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE,20*10,1));		//10s fire resistance 1
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,20*10,1));           	//10s speed 1
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,20*30,2));            	//30s jump 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,20*10,1));        //10s invisibility 1
+			player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 30, 2)); // 30s
+																								// absorption
+																								// 2
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 30, 2)); // 30s
+																										// damage
+																										// resistance
+																										// 2
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 10, 1)); // 10s
+																									// fire
+																									// resistance
+																									// 1
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 10, 1)); // 10s
+																							// speed
+																							// 1
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20 * 30, 2)); // 30s
+																							// jump
+																							// 2
+			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 10, 1)); // 10s
+																									// invisibility
+																									// 1
 		}
 		spectators.clear();
 		tempspectators.clear();
@@ -286,7 +297,7 @@ public abstract class Arena implements Listener
 	{
 		Broadcast(message);
 		Reset();
-		for(Player player : players)
+		for (Player player : players)
 			ZombieInvasionMinigame.ConnectPlayer(player, "S150");
 		Bukkit.getServer().shutdown();
 	}
@@ -344,7 +355,8 @@ public abstract class Arena implements Listener
 				player.teleport(spawnLocation);
 				player.resetMaxHealth();
 				Damageable p = player;
-				player.setHealth(p.getMaxHealth());//player.setHealth((float) player.getMaxHealth());
+				player.setHealth(p.getMaxHealth());// player.setHealth((float)
+													// player.getMaxHealth());
 			}
 		}
 	}
@@ -764,30 +776,27 @@ public abstract class Arena implements Listener
 		return this.sendWavesTaskId != -1;
 	}
 
-	public void TryStart()
+	public void Start()
 	{
 		if (!isRunning() && !isStarting())
 		{
-			if (players.size() >= this.startAtPlayerCount)
+			this.Broadcast("Waves are coming in " + this.secondsWaitFirstTimeStart + " seconds!");
+			if (this.sendWavesTaskId != -1)
+				Bukkit.getServer().getScheduler().cancelTask(this.sendWavesTaskId);
+			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+			this.sendWavesTaskId = scheduler.scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 			{
-				this.Broadcast("Waves are coming in " + this.secondsWaitFirstTimeStart + " seconds!");
-				if (this.sendWavesTaskId != -1)
-					Bukkit.getServer().getScheduler().cancelTask(this.sendWavesTaskId);
-				BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-				this.sendWavesTaskId = scheduler.scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+				@Override
+				public void run()
 				{
-					@Override
-					public void run()
-					{
-						SendWaves();
-						Bukkit.getScheduler().cancelTask(sendWavesTaskId);
-						sendWavesTaskId = -1;
-					}
-				}, 20 * this.secondsWaitFirstTimeStart);
-			}
+					SendWaves();
+					Bukkit.getScheduler().cancelTask(sendWavesTaskId);
+					sendWavesTaskId = -1;
+				}
+			}, 20 * this.secondsWaitFirstTimeStart);
 		}
 	}
-	
+
 	public void TeleportPlayerToRandomPlayer(Player player)
 	{
 		List<Player> possiblePlayers = new ArrayList<Player>();
@@ -819,10 +828,7 @@ public abstract class Arena implements Listener
 			CheckSpectators();
 		}
 		else
-		{
 			this.Broadcast(player.getName() + " has joined the arena!");
-			TryStart();
-		}
 	}
 
 	@SuppressWarnings("deprecation")

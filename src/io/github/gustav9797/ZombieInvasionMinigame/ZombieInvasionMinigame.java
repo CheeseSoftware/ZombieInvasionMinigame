@@ -25,7 +25,9 @@ import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
 import net.minecraft.util.com.google.common.io.ByteStreams;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -65,11 +67,16 @@ import ostkaka34.OstEconomyPlugin.OstEconomyPlugin;
 
 public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 {
-	LinkedList<CustomEntityType> entityTypes;
-	Random r = new Random();
-	Arena arena;
-	// File configFile;
-	File schematicsDirectory;
+	private LinkedList<CustomEntityType> entityTypes;
+	private Random r = new Random();
+	private Arena arena;
+	private File schematicsDirectory;
+	
+	private World lobbyWorld;
+	private int secondsVotingTime = 30;
+	private int currentVotingTime = 0;
+	private int votingTaskId = -1;
+	
 	public static IOstEconomy economyPlugin;
 
 	@Override
@@ -83,7 +90,10 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 
 		// this.configFile = new File(this.getDataFolder() + File.separator +
 		// "config.yml");
-		this.schematicsDirectory = new File(this.getDataFolder() + File.separator + "schematics");
+		this.schematicsDirectory = new File("../schematics");
+		if (!schematicsDirectory.exists())
+			schematicsDirectory.mkdir();
+		
 		this.entityTypes = new LinkedList<CustomEntityType>();
 
 		this.entityTypes.add(new CustomEntityType("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EntityBlockBreakingZombie.class));
@@ -98,9 +108,9 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			this.getServer().getLogger().severe("Could not load economy!");
 		}
 
-		if (!schematicsDirectory.exists())
-			schematicsDirectory.mkdir();
-
+		this.lobbyWorld = this.getServer().getWorld("lobby");
+		if(this.lobbyWorld == null)
+			this.getLogger().severe("Could not find world \"lobby\"!");
 		/*
 		 * if (!configFile.exists()) { try { configFile.createNewFile(); } catch
 		 * (IOException e) { e.printStackTrace(); } this.SaveConfig(); }
@@ -597,6 +607,11 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	{
 		return (JavaPlugin) Bukkit.getPluginManager().getPlugin("WeaponsPlugin");
 	}
+	
+	public boolean isVoting()
+	{
+		return this.votingTaskId != -1;
+	}
 
 	@SuppressWarnings("rawtypes")
 	private static Object getPrivateStatic(Class clazz, String f) throws Exception
@@ -670,7 +685,26 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onPlayerJoin(PlayerJoinEvent event)
 	{
-		arena.JoinPlayer(event.getPlayer());
+		Player player = event.getPlayer();
+		if(arena == null)
+		{
+			player.teleport(this.lobbyWorld.getSpawnLocation());
+			if(!this.isVoting())
+			{
+				this.votingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						SendWaves();
+						Bukkit.getScheduler().cancelTask(sendWavesTaskId);
+						votingTaskId = -1;
+					}
+				}, 10, 100);
+			}
+		}
+		else
+			arena.JoinPlayer(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
