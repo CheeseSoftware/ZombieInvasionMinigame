@@ -28,7 +28,9 @@ import org.bukkit.craftbukkit.v1_7_R3.entity.CraftZombie;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
@@ -130,6 +132,28 @@ public class ZombieArena extends Arena
 		}
 	}
 
+	public void onPlayerDeath(PlayerDeathEvent event)
+	{
+		Player player = event.getEntity();
+		
+		net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.getMiddle().getWorld()).getHandle();
+		EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
+		((EntityBlockBreakingZombie)monster).setArena(this);
+		
+        ItemStack skull = new ItemStack(Material.SKULL_ITEM);
+        SkullMeta meta3 = (SkullMeta) skull.getItemMeta();
+        meta3.setOwner(player.getName());
+        skull.setItemMeta(meta3);
+		
+        ((CraftZombie)monster.getBukkitEntity()).getEquipment().setHelmet(
+				skull);
+		
+		monster.getBukkitEntity().teleport(player.getLocation());
+		mcWorld.addEntity(monster, SpawnReason.CUSTOM);		
+		
+		super.onPlayerDeath(event);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void onSpawnZombieTick()
 	{
