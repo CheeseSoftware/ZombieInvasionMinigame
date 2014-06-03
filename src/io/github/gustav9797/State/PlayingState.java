@@ -1012,7 +1012,7 @@ public class PlayingState extends ArenaState
 
 					if (monster != null)
 					{
-						((ICustomMonster) monster).setArena(arena);
+						((ICustomMonster) monster).setPlayingState(this);
 						double xd = r.nextDouble() / 10;
 						double zd = r.nextDouble() / 10;
 
