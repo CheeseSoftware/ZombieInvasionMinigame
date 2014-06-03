@@ -1,6 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame.Entity;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalBreakBlock;
 import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalCustomMeleeAttack;
 import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalCustomNearestAttackableTarget;
@@ -64,24 +64,24 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 
 	}
 
-	public void setArena(Arena arena)
+	public void setPlayingState(PlayingState state)
 	{
-		if (arena != null)
-			this.goalSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, arena.getSpawnLocation()));
+		if (state != null)
+			this.goalSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, state.getSpawnLocation()));
 		
 		if (random.nextInt(8) == 0)
 		{
 			//ItemStack[] equipment = this.getEquipment();
 			//vågar inte göra något mer:/ skeletonhuvuden!
 			
-			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, arena, true));
+			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, true));
 		}
 		else
 		{
-			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, arena));
+			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state));
 		}
 		
-		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, arena));
+		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, state));
 	}
 
 	@Override

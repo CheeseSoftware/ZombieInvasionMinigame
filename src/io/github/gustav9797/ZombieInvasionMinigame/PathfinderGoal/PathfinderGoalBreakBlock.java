@@ -1,6 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	float h;
 	Random r = new Random();
 	int i;
-	Arena arena;
+	PlayingState playingState;
 	int j = -1;
 	boolean isStrongBreaker; // false: only breakable materials
 	
@@ -55,16 +55,16 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 
 	private Location oldLocation = null;
 
-	public PathfinderGoalBreakBlock(EntityInsentient entity, Arena arena, boolean isStrongBreaker)
+	public PathfinderGoalBreakBlock(EntityInsentient entity, PlayingState playingState, boolean isStrongBreaker)
 	{
-		this.arena = arena;
+		this.playingState = playingState;
 		this.entity = entity;
 		this.isStrongBreaker = isStrongBreaker;
 	}
 	
-	public PathfinderGoalBreakBlock(EntityInsentient entity, Arena arena)
+	public PathfinderGoalBreakBlock(EntityInsentient entity, PlayingState playingState)
 	{
-		this.arena = arena;
+		this.playingState = playingState;
 		this.entity = entity;
 		this.isStrongBreaker = false;
 	}
@@ -264,7 +264,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 		for (Vector vector : possiblePositions)
 		{
 			Location finalLocation = new Location(a.getWorld(), a.getBlockX() + vector.getBlockX(), a.getBlockY() + vector.getBlockY(), a.getBlockZ() + vector.getBlockZ());
-			if (arena == null || (arena != null && !arena.isBorder(finalLocation.toVector())))
+			if (playingState == null || (playingState != null && !playingState.isBorder(finalLocation.toVector())))
 				blocks.add(finalLocation.getBlock());
 		}
 		return (Set<Block>) blocks;

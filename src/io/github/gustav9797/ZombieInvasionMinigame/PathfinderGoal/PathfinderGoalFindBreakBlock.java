@@ -1,6 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ import net.minecraft.server.v1_7_R3.PathfinderGoal;
 public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 {
 	EntityInsentient entity;
-	Arena arena;
+	PlayingState state;
 	Location oldLocation = null;
 	int findRadius = 10;
 	int findHeight = 2;
@@ -43,10 +43,10 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 	private static List<Material> priorityMaterials = new ArrayList<Material>(Arrays.asList(Material.WOOD_DOOR, Material.IRON_DOOR, Material.TRAP_DOOR, Material.CHEST, Material.THIN_GLASS,
 			Material.STAINED_GLASS, Material.STAINED_GLASS_PANE, Material.GLASS, Material.THIN_GLASS/*, Material.TORCH, Material.WOOL*/));
 
-	public PathfinderGoalFindBreakBlock(EntityInsentient entity, Arena arena, int blockDamageIncrease)
+	public PathfinderGoalFindBreakBlock(EntityInsentient entity, PlayingState state, int blockDamageIncrease)
 	{
 		this.entity = entity;
-		this.arena = arena;
+		this.state = state;
 		this.blockDamageIncrease = blockDamageIncrease;
 	}
 
@@ -211,7 +211,7 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 					Block block = this.entity.getBukkitEntity().getWorld().getBlockAt(x, y, z);
 					if (!nonBreakableMaterials.contains(block.getType()) && !this.blocksNotWalkable.contains(block))
 					{
-						if (arena == null || (arena != null && !arena.isBorder(block.getLocation().toVector())))
+						if (state == null || (state != null && !state.isBorder(block.getLocation().toVector())))
 							blocks.add(block);
 					}
 				}
@@ -228,7 +228,7 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 		List<Block> lowPriorityBlocks = new ArrayList<Block>();
 		for (Block block : blocks)
 		{
-			if (!nonBreakableMaterials.contains(block.getType()) && (arena == null || arena.ContainsLocation(block.getLocation())))
+			if (!nonBreakableMaterials.contains(block.getType()) && (state == null || state.ContainsLocation(block.getLocation())))
 			{
 				if (priorityMaterials.contains(block.getType()))
 					highPriorityBlocks.add(block);

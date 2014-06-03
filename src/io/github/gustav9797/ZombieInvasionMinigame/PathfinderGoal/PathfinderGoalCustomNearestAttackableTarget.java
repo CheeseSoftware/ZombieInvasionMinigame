@@ -2,7 +2,7 @@ package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import java.util.Random;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
@@ -16,14 +16,14 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 
 	private final int attackCheckFrequency;
 	private EntityLiving target;
-	private Arena arena;
+	private PlayingState state;
 	private Random r = new Random();
 
-	public PathfinderGoalCustomNearestAttackableTarget(EntityCreature entitycreature, int attackCheckFrequency, Arena arena)
+	public PathfinderGoalCustomNearestAttackableTarget(EntityCreature entitycreature, int attackCheckFrequency, PlayingState state)
 	{
 		super(entitycreature);
 		this.attackCheckFrequency = attackCheckFrequency;
-		this.arena = arena;
+		this.state = state;
 		this.a(1);
 	}
 
@@ -33,17 +33,17 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 		{
 			return false;
 		}
-		else if (arena != null && (this.entity.getGoalTarget() == null || (this.entity.getGoalTarget().getBukkitEntity() instanceof Player &&  arena.isSpectator((Player)this.entity.getGoalTarget().getBukkitEntity()))))
+		else if (state != null && (this.entity.getGoalTarget() == null || (this.entity.getGoalTarget().getBukkitEntity() instanceof Player &&  state.isSpectator((Player)this.entity.getGoalTarget().getBukkitEntity()))))
 		//else if(this.entity.getGoalTarget() == null)
 		{
 			// this.target = (EntityLiving) list.get(0);
 			//Player[] players = Bukkit.getServer().getOnlinePlayers();
 			Player closestPlayer = null;
 			double closestPlayerDistance = Double.MAX_VALUE;
-			for(Player player : arena.players)
+			for(Player player : state.getPlayers())
 			{
 				double distance = player.getLocation().distance(this.entity.getBukkitEntity().getLocation());
-				if(distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL && (arena == null || !arena.isSpectator(player)))
+				if(distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL && (state == null || !state.isSpectator(player)))
 				{
 					closestPlayerDistance = distance;
 					closestPlayer = player;

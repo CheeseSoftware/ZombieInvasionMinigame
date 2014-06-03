@@ -181,7 +181,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			{
 				net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.arena.middle.getWorld()).getHandle();
 				EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-				((EntityBlockBreakingZombie) monster).setArena(this.arena);
+				((EntityBlockBreakingZombie) monster).setPlayingState((PlayingState)arena.getState());
 				monster.getBukkitEntity().teleport(player.getLocation());
 				mcWorld.addEntity(monster, SpawnReason.CUSTOM);
 				return true;
@@ -625,7 +625,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			if (monster != null)
 			{
 				monster.getBukkitEntity().teleport(event.getLocation());
-				((ICustomMonster) monster).setArena(null);
+				((ICustomMonster) monster).setPlayingState(null);
 				mcWorld.addEntity(monster, SpawnReason.CUSTOM);
 			}
 		}
