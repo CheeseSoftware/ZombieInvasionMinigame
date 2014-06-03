@@ -1,5 +1,7 @@
 package io.github.gustav9797.ZombieInvasionMinigame;
 
+import io.github.gustav9797.Zombie.CustomEntityType;
+import io.github.gustav9797.Zombie.ZombieArena;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingSkeleton;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingVillager;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingZombie;

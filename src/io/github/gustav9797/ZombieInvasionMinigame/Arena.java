@@ -152,7 +152,7 @@ public abstract class Arena implements Listener
 		this.scoreboard = new ArenaScoreboard(this);
 	}
 
-	abstract void SendWave(int wave);
+	protected abstract void SendWave(int wave);
 
 	protected void Broadcast(String message)
 	{

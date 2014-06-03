@@ -1,5 +1,7 @@
 package io.github.gustav9797.ZombieInvasionMinigame;
 
+import io.github.gustav9797.Zombie.ZombieArena;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

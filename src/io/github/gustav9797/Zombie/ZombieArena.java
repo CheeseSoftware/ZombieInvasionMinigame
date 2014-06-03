@@ -1,5 +1,9 @@
-package io.github.gustav9797.ZombieInvasionMinigame;
+package io.github.gustav9797.Zombie;
 
+import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.ZombieInvasionMinigame.SpawnPoint;
+import io.github.gustav9797.ZombieInvasionMinigame.SpawnPointManager;
+import io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingSkeleton;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingVillager;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingZombie;
@@ -34,7 +38,7 @@ import org.bukkit.util.Vector;
 
 public class ZombieArena extends Arena
 {
-	protected Map<UUID, EntityCreature> monsters = new HashMap<UUID, EntityCreature>();
+	public Map<UUID, EntityCreature> monsters = new HashMap<UUID, EntityCreature>();
 	protected List<SpawnPoint> monsterSpawnList = new ArrayList<SpawnPoint>();
 	protected SpawnPointManager spawnPointManager;
 	protected Random random = new Random();
@@ -45,7 +49,7 @@ public class ZombieArena extends Arena
 	protected int sendWavesTaskId = -1;
 
 	protected int zombiesToSpawn = 0;
-	protected int skeletonsToSpawn = 0;
+	protected int skeletonsToSpawn = 0;                
 	protected int villagersToSpawn = 0;
 
 	public ZombieArena(String name)
@@ -361,7 +365,7 @@ public class ZombieArena extends Arena
 			if (this.ticksUntilNextWave <= 0)
 			{
 				this.ticksSinceLastWave = 0;
-				this.currentWave += this.waveIncrease;
+				this.currentWave += 1;
 				this.ResetSpectators();
 				this.ticksUntilNextWave = -1;
 				this.SendWave(this.currentWave);

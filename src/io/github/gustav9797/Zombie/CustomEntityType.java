@@ -1,4 +1,4 @@
-package io.github.gustav9797.ZombieInvasionMinigame;
+package io.github.gustav9797.Zombie;
 
 import java.lang.reflect.Field;
 import java.util.Map;

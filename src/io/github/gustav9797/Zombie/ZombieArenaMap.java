@@ -1,4 +1,6 @@
-package io.github.gustav9797.ZombieInvasionMinigame;
+package io.github.gustav9797.Zombie;
+
+import io.github.gustav9797.ZombieInvasionMinigame.ArenaMap;
 
 import java.io.File;
 import java.io.IOException;
