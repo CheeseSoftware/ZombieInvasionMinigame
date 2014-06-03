@@ -43,15 +43,6 @@ public class ZombieArena extends Arena
 	protected int currentWave = 0;
 	protected int ticksUntilNextWave = -1;
 	protected int sendWavesTaskId = -1;
-	protected int monsterSpawnLimit = 130;
-
-	protected int zombieGroups = 10;
-	protected int zombieStartAmount = 20;
-	protected int zombieAmountIncrease = 10;
-	protected int maxZombieAmount = 200;
-	protected int startWave = 1;
-	protected int waveIncrease = 1;
-	protected int ticksBetweenZombieSpawns = 20;
 
 	protected int zombiesToSpawn = 0;
 	protected int skeletonsToSpawn = 0;
@@ -355,49 +346,6 @@ public class ZombieArena extends Arena
 				monster.die();
 		}
 		monsters.clear();
-	}
-
-	@Override
-	protected void LoadConfig()
-	{
-		super.LoadConfig();
-		config = new YamlConfiguration();
-		try
-		{
-			config.load(configFile);
-			this.zombieGroups = config.getInt("zombieGroups");
-			this.zombieStartAmount = config.getInt("zombieStartAmount");
-			this.zombieAmountIncrease = config.getInt("zombieAmountIncrease");
-			this.maxZombieAmount = config.getInt("maxZombieAmount");
-			this.startWave = config.getInt("startWave");
-			this.waveIncrease = config.getInt("waveIncrease");
-			this.ticksBetweenZombieSpawns = config.getInt("ticksBetweenZombieSpawns");
-		}
-		catch (IOException | InvalidConfigurationException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	protected void SaveConfig()
-	{
-		super.SaveConfig();
-		try
-		{
-			config.set("zombieGroups", this.zombieGroups);
-			config.set("zombieStartAmount", this.zombieStartAmount);
-			config.set("zombieAmountIncrease", this.zombieAmountIncrease);
-			config.set("maxZombieAmount", this.maxZombieAmount);
-			config.set("startWave", this.startWave);
-			config.set("waveIncrease", this.waveIncrease);
-			config.set("ticksBetweenZombieSpawns", this.ticksBetweenZombieSpawns);
-			config.save(configFile);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	@Override
