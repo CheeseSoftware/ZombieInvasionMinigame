@@ -142,9 +142,11 @@ public class ZombieArena extends Arena
 		((EntityBlockBreakingZombie)monster).setArena(this);
 		
         ItemStack skull = new ItemStack(Material.SKULL_ITEM);
-        SkullMeta meta3 = (SkullMeta) skull.getItemMeta();
-        meta3.setOwner(player.getName());
-        skull.setItemMeta(meta3);
+        skull.setDurability((short)3);
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+        skullMeta.setOwner(player.getName());
+        skullMeta.setDisplayName(player.getName());
+        skull.setItemMeta(skullMeta);
 		
         zombie = (CraftZombie)monster.getBukkitEntity();
         
@@ -153,6 +155,7 @@ public class ZombieArena extends Arena
         zombie.setCustomNameVisible(true);
         zombie.setCanPickupItems(true);
 		
+        this.monsters.put(zombie.getUniqueId(), monster);
 		monster.getBukkitEntity().teleport(player.getLocation());
 		mcWorld.addEntity(monster, SpawnReason.CUSTOM);		
 		
