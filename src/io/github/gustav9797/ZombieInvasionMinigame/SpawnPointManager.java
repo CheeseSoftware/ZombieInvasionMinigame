@@ -1,5 +1,7 @@
 package io.github.gustav9797.ZombieInvasionMinigame;
 
+import io.github.gustav9797.State.PlayingState;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,9 +22,9 @@ public class SpawnPointManager
 	private File configFile;
 	private Random r = new Random();
 
-	public SpawnPointManager(Arena arena)
+	public SpawnPointManager(PlayingState playingState)
 	{
-		configFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + arena.name + File.separator + "spawnpoints.yml");
+		configFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + playingState.getMap() + File.separator + "spawnpoints.yml");
 		if (!configFile.exists())
 		{
 			try

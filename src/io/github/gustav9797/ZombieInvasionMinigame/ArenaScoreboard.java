@@ -1,6 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame;
 
-import io.github.gustav9797.Zombie.ZombieArena;
+import io.github.gustav9797.State.PlayingState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,15 +18,15 @@ import ostkaka34.OstEconomyPlugin.OstEconomyPlugin;
 
 public class ArenaScoreboard
 {
-	protected Arena arena;
+	protected PlayingState playingState;
 	protected int tickTaskId;
 	protected Map<String, Objective> objectives = new HashMap<String, Objective>();
 	// protected Scoreboard scoreboard;
 	protected Map<Player, Scoreboard> scoreboards = new HashMap<Player, Scoreboard>();
 
-	public ArenaScoreboard(Arena arena)
+	public ArenaScoreboard(PlayingState playingState)
 	{
-		this.arena = arena;
+		this.playingState = playingState;
 		this.tickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
@@ -41,15 +41,15 @@ public class ArenaScoreboard
 	private void UpdatePlayerInfo()
 	{
 		OstEconomyPlugin economy = (OstEconomyPlugin) ZombieInvasionMinigame.getEconomyPlugin();
-		List<Player> players = new ArrayList<Player>(arena.players);
+		List<Player> players = new ArrayList<Player>(playingState.getPlayers());
 		for (Player player : players)
 		{
 			Objective title = player.getScoreboard().getObjective("stats");
 			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "XP:")).setScore((int) economy.getXp(player));
 			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Money:")).setScore((int) economy.getMoney(player));
-			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Game time:")).setScore((int) Math.round(arena.getTotalGameTicks() / 20));
-			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Current wave:")).setScore(((arena instanceof ZombieArena ? ((ZombieArena) arena).getCurrentWave() : 0)));
-			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Monsters left:")).setScore(((arena instanceof ZombieArena ? ((ZombieArena) arena).monsters.size() : 0)));
+			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Game time:")).setScore((int) Math.round(playingState.getTotalGameTicks() / 20));
+			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Current wave:")).setScore(playingState.getCurrentWave());
+			title.getScore(Bukkit.getOfflinePlayer(ChatColor.GOLD + "Monsters left:")).setScore(playingState.getMonsters().size());
 		}
 	}
 

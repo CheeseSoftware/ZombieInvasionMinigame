@@ -20,8 +20,11 @@ public class ArenaMap
 	// config.yml start
 	public int size = 96;
 	public int maxPlayers = 10;
-	public Location spawnLocation = new Location(null, 32, 80, 32, 0, 0);
+	public Location spawnLocation = new Location(null, 0, 80, 0, 0, 0);
 	public String schematicFileName = "";
+	public int startAtPlayerCount = 1;
+	public int secondsBeforeStart = 60;
+	public int secondsWaitFirstTimeStart = 30;
 	// config.yml end
 
 	// border.yml start
@@ -31,7 +34,7 @@ public class ArenaMap
 	// border.yml end
 
 	// potionregions.yml start
-	protected List<PotionRegion> potionRegions = new ArrayList<PotionRegion>();
+	public List<PotionRegion> potionRegions = new ArrayList<PotionRegion>();
 	// potionregions.yml end
 
 	public ArenaMap(String name)
@@ -62,6 +65,20 @@ public class ArenaMap
 	public void LoadConfig()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "config.yml");
+		
+		if(!configFile.exists())
+		{
+			try
+			{
+				configFile.createNewFile();
+				this.SaveConfig();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
@@ -71,6 +88,9 @@ public class ArenaMap
 			Vector spawnPos = config.getVector("spawnLocation");
 			this.spawnLocation = spawnPos.toLocation(null, (float) config.getDouble("spawnLocationYaw"), (float) config.getDouble("SpawnLocationPitch"));
 			this.schematicFileName = config.getString("schematicFileName");
+			this.startAtPlayerCount = config.getInt("startAtPlayerCount");
+			this.secondsBeforeStart = config.getInt("secondsBeforeStart");
+			this.secondsWaitFirstTimeStart = config.getInt("secondsWaitFirstTimeStart");
 		}
 		catch (IOException | InvalidConfigurationException e)
 		{
@@ -90,6 +110,9 @@ public class ArenaMap
 			config.set("spawnLocationYaw", this.spawnLocation.getYaw());
 			config.set("spawnLocationPitch", this.spawnLocation.getPitch());
 			config.set("schematicFileName", this.schematicFileName);
+			config.set("startAtPlayerCount", this.startAtPlayerCount);
+			config.set("secondsBeforeStart", this.secondsBeforeStart);
+			config.set("secondsWaitFirstTimeStart", this.secondsWaitFirstTimeStart);
 			config.save(configFile);
 		}
 		catch (IOException e)
@@ -101,6 +124,20 @@ public class ArenaMap
 	public void LoadBorder()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "border.yml");
+		
+		if(!configFile.exists())
+		{
+			try
+			{
+				configFile.createNewFile();
+				this.SaveBorder();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
@@ -137,6 +174,20 @@ public class ArenaMap
 	public void LoadPotionregionConfig()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "potionregions.yml");
+		
+		if(!configFile.exists())
+		{
+			try
+			{
+				configFile.createNewFile();
+				this.SavePotionregionConfig();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
