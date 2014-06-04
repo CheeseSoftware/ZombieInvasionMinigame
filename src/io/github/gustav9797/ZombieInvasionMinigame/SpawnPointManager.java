@@ -24,7 +24,7 @@ public class SpawnPointManager
 
 	public SpawnPointManager(PlayingState playingState)
 	{
-		configFile = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + playingState.getMap() + File.separator + "spawnpoints.yml");
+		configFile = new File("../maps" + File.separator + playingState.getMap().name + File.separator + "spawnpoints.yml");
 		if (!configFile.exists())
 		{
 			try

@@ -39,6 +39,20 @@ public class ZombieArenaMap extends ArenaMap
 	public void LoadZombieConfig()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "zombieconfig.yml");
+		
+		if(!configFile.exists())
+		{
+			try
+			{
+				configFile.createNewFile();
+				this.SaveZombieConfig();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{

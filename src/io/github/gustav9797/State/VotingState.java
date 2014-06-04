@@ -28,6 +28,8 @@ public class VotingState extends ArenaState
 	private int ticksVotingTotal = 600;
 	private int ticksVotingCurrent = 0;
 	private int votingTaskId = -1;
+	private int startingTaskId = -1;
+	private int currentStartingTicks = 0;
 	private boolean voting = true;
 	private Map<Integer, Map.Entry<ArenaMap, Integer>> maps = new HashMap<Integer, Map.Entry<ArenaMap, Integer>>();
 
@@ -41,29 +43,38 @@ public class VotingState extends ArenaState
 			@Override
 			public void run()
 			{
-				ticksVotingCurrent += ticksBetweenVotingMessage;
+				ticksVotingCurrent += 10;
 				if (ticksVotingCurrent >= ticksVotingTotal)
 				{
 					// End voting
 					voting = false;
 					final ArenaMap mostVotes = DetermineMapWon();
 					arena.Broadcast(votingPlayers, "Map " + mostVotes.name + " has won! Starting game in 10 seconds..");
-					Bukkit.getScheduler().scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+					startingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 					{
 						@Override
 						public void run()
 						{
-							arena.setState(new PlayingState(arena, votingPlayers, (ZombieArenaMap)mostVotes));
+							currentStartingTicks += 20;
+							if (currentStartingTicks >= 100)
+								arena.Broadcast(votingPlayers, currentStartingTicks / 20 + "..");
+							if (currentStartingTicks >= 200)
+							{
+								arena.setState(new PlayingState(arena, votingPlayers, (ZombieArenaMap) mostVotes));
+								Bukkit.getScheduler().cancelTask(startingTaskId);
+							}
 						}
-					}, 200);
+					}, 0, 20);
 					Bukkit.getScheduler().cancelTask(votingTaskId);
 					votingTaskId = -1;
 				}
-
-				String[] votingMessage = getVotingMessage();
-				arena.Broadcast(votingPlayers, votingMessage);
+				else if (ticksVotingCurrent % ticksBetweenVotingMessage == 0)
+				{
+					String[] votingMessage = getVotingMessage();
+					arena.Broadcast(votingPlayers, votingMessage);
+				}
 			}
-		}, 60, this.ticksBetweenVotingMessage);
+		}, 60, 10);
 	}
 
 	private ArenaMap DetermineMapWon()
@@ -130,6 +141,10 @@ public class VotingState extends ArenaState
 					player.setMetadata("voted", new FixedMetadataValue(ZombieInvasionMinigame.getPlugin(), true));
 					maps.get(id).setValue(maps.get(id).getValue() + 1);
 					player.sendMessage("Thanks for voting!");
+					for (Player temp : this.votingPlayers)
+						if (!temp.hasMetadata("voted"))
+							return;
+					this.ticksVotingCurrent = Integer.MAX_VALUE / 2;
 				}
 				else
 					player.sendMessage("That map doesn't exist.");

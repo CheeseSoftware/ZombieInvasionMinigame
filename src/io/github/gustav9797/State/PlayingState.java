@@ -80,6 +80,7 @@ public class PlayingState extends ArenaState
 	private List<Player> players;
 	private ZombieArenaMap map;
 	private Random r = new Random();
+	private World world;
 
 	private int sendWavesTaskId = -1;
 	private int tickTaskId = -1;
@@ -91,7 +92,7 @@ public class PlayingState extends ArenaState
 
 	private List<Player> spectators = new ArrayList<Player>();
 	private ArenaScoreboard scoreboard;
-	private ArrayList<BorderBlock> border;
+	private List<BorderBlock> border = new ArrayList<BorderBlock>();
 
 	private Map<UUID, EntityCreature> monsters = new HashMap<UUID, EntityCreature>();
 	private List<SpawnPoint> monsterSpawnList = new ArrayList<SpawnPoint>();
@@ -110,6 +111,9 @@ public class PlayingState extends ArenaState
 		super(arena);
 		this.players = toTransfer;
 		this.map = map;
+		this.world = Bukkit.getServer().getWorld("world");
+		if (this.world == null)
+			Bukkit.getLogger().severe("Could not find world! Fix immediately!");
 
 		spawnPointManager = new SpawnPointManager(this);
 
@@ -137,6 +141,12 @@ public class PlayingState extends ArenaState
 		armorTypes[4][1] = Material.DIAMOND_CHESTPLATE;
 		armorTypes[4][2] = Material.DIAMOND_LEGGINGS;
 		armorTypes[4][3] = Material.DIAMOND_BOOTS;
+		
+		for(Player player : toTransfer)
+			player.teleport(this.getSpawnLocation());
+		
+		this.LoadMap();
+		this.Start();
 	}
 
 	@Override
@@ -172,14 +182,12 @@ public class PlayingState extends ArenaState
 
 	public Location getSpawnLocation()
 	{
-		return new Location(arena.middle.getWorld(), arena.middle.getBlockX() + map.spawnLocation.getBlockX(), arena.middle.getBlockY() + map.spawnLocation.getBlockY(), arena.middle.getBlockZ()
-				+ map.spawnLocation.getBlockZ(), arena.middle.getYaw(), arena.middle.getPitch());
+		return new Location(this.world, map.spawnLocation.getBlockX(), map.spawnLocation.getBlockY(), map.spawnLocation.getBlockZ(), map.spawnLocation.getYaw(), map.spawnLocation.getPitch());
 	}
 
 	public void setSpawnLocation(Location location)
 	{
-		map.spawnLocation = new Location(arena.middle.getWorld(), location.getBlockX() - arena.middle.getBlockX(), location.getBlockY() - arena.middle.getBlockY(), location.getBlockZ()
-				- arena.middle.getBlockZ(), arena.middle.getYaw(), arena.middle.getPitch());
+		map.spawnLocation = new Location(this.world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		map.SaveConfig();
 	}
 
@@ -205,17 +213,10 @@ public class PlayingState extends ArenaState
 	public void SaveMap()
 	{
 		int topY = 256;
-		/*
-		 * if (!border.isEmpty()) { for (BorderBlock borderBlock : border) if
-		 * (borderBlock.getLocation().getBlockY() > topY) topY =
-		 * borderBlock.getLocation().getBlockY(); topY--; } else
-		 */
-		// topY = 256;
 		int groundLevel = 4;
-		EditSession session = new EditSession(new BukkitWorld(arena.middle.getWorld()), 999999999);
-		File schematic = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + this.map.schematicFileName + ".schematic");
-		CuboidClipboard clipboard = new CuboidClipboard(new com.sk89q.worldedit.Vector(this.getSize() - 1, topY, this.getSize() - 1), new com.sk89q.worldedit.Vector(arena.middle.getBlockX()
-				- getRadius() + 1, groundLevel, arena.middle.getBlockZ() - getRadius() + 1));
+		EditSession session = new EditSession(new BukkitWorld(this.world), 999999999);
+		File schematic = new File("../maps" + File.separator + this.map.name + File.separator + this.map.name + ".schematic");
+		CuboidClipboard clipboard = new CuboidClipboard(new com.sk89q.worldedit.Vector(this.getSize() - 1, topY, this.getSize() - 1), new com.sk89q.worldedit.Vector(0, groundLevel, 0));
 		clipboard.copy(session);
 		try
 		{
@@ -229,26 +230,21 @@ public class PlayingState extends ArenaState
 
 	public void LoadMap()
 	{
-		EditSession es = new EditSession(new BukkitWorld(arena.middle.getWorld()), 999999999);
+		EditSession es = new EditSession(new BukkitWorld(this.world), 999999999);
 		es.enableQueue();
-		File schematic = new File(ZombieInvasionMinigame.getPlugin().getDataFolder() + File.separator + "schematics" + File.separator + map.schematicFileName + ".schematic");
 		int groundLevel = 4;
-		if (schematic.exists())
+		CuboidClipboard schematic = this.map.getSchematic();
+		com.sk89q.worldedit.Vector location = new com.sk89q.worldedit.Vector(1, groundLevel, 1);
+		try
 		{
-			try
-			{
-				CuboidClipboard cc = SchematicFormat.MCEDIT.load(schematic);
-				com.sk89q.worldedit.Vector location = new com.sk89q.worldedit.Vector(arena.middle.getBlockX() - getRadius() + 1, groundLevel, arena.middle.getBlockZ() - getRadius() + 1);
-				cc.paste(es, location, false);
-				es.flushQueue();
-			}
-			catch (MaxChangedBlocksException | DataException | IOException e)
-			{
-				e.printStackTrace();
-			}
+			schematic.paste(es, location, false);
 		}
-		else
-			Bukkit.getLogger().warning("[ZombieInvasion] Schematic file for arena " + map.name + " was not found! This will cause the arena to not get reset properly.");
+		catch (MaxChangedBlocksException e)
+		{
+			e.printStackTrace();
+		}
+		es.flushQueue();
+
 	}
 
 	public void ClearMap()
@@ -264,9 +260,8 @@ public class PlayingState extends ArenaState
 		else
 			topY = 100;
 		int groundLevel = 4;
-		EditSession es = new EditSession(new BukkitWorld(arena.middle.getWorld()), 999999999);
-		CuboidRegion region = new CuboidRegion(new com.sk89q.worldedit.Vector(arena.middle.getBlockX() - getRadius() + 1, groundLevel, arena.middle.getBlockZ() - getRadius() + 1),
-				new com.sk89q.worldedit.Vector(arena.middle.getBlockX() + getRadius() - 1, topY, arena.middle.getBlockZ() + getRadius() - 1));
+		EditSession es = new EditSession(new BukkitWorld(this.world), 999999999);
+		CuboidRegion region = new CuboidRegion(new com.sk89q.worldedit.Vector(1, groundLevel, 1), new com.sk89q.worldedit.Vector(this.map.size - 1, topY, this.map.size - 1));
 		try
 		{
 			es.setBlocks(region, new BaseBlock(0));
@@ -430,7 +425,7 @@ public class PlayingState extends ArenaState
 		this.ResetSpectators();
 		this.RespawnPlayers();
 
-		List<Entity> entList = arena.middle.getWorld().getEntities();
+		List<Entity> entList = this.world.getEntities();
 		for (Entity entity : entList)
 		{
 			if (entity instanceof Item)
@@ -459,11 +454,11 @@ public class PlayingState extends ArenaState
 
 	public boolean ContainsLocation(Location location)
 	{
-		if (location.getWorld().getName().equals(arena.middle.getWorld().getName()))
+		if (location.getWorld().getName().equals(this.world.getName()))
 		{
-			if (location.getBlockX() >= (-getRadius() + arena.middle.getBlockX()) && location.getBlockX() <= (getRadius() + arena.middle.getBlockX()))
+			if (location.getBlockX() > 0 && location.getBlockX() < this.map.size)
 			{
-				if (location.getBlockZ() >= (-getRadius() + arena.middle.getBlockZ()) && location.getBlockZ() <= (getRadius() + arena.middle.getBlockZ()))
+				if (location.getBlockZ() >= 0 && location.getBlockZ() <= this.map.size)
 				{
 					return true;
 				}
@@ -596,26 +591,24 @@ public class PlayingState extends ArenaState
 		if (!border.isEmpty())
 			RestoreBorder();
 
-		int radius = map.size / 2;
 		BlockState originalBlock = null;
-		World world = arena.middle.getWorld();
 
 		for (int y = 0; y <= height; y++)
 		{
-			for (int x = -radius; x <= radius; x++)
+			for (int x = 0; x <= this.map.size; x++)
 			{
-				for (int z = -radius; z <= radius; z++)
+				for (int z = 0; z <= this.map.size; z++)
 				{
-					if (x == -radius || z == -radius || x == radius || z == radius)
+					if (x == 0 || z == 0 || x == this.map.size || z == this.map.size)
 					{
-						originalBlock = world.getBlockAt(x + arena.middle.getBlockX(), y, z + arena.middle.getBlockZ()).getState();
+						originalBlock = world.getBlockAt(x, y, z).getState();
 						if (replacableMaterials.contains(originalBlock.getType()))
 						{
 							BorderBlock block = new BorderBlock(originalBlock.getLocation().toVector(), material, originalBlock.getType());
 							while (this.border.contains(block))
 								this.border.remove(block);
 							this.border.add(block);
-							world.getBlockAt(x + arena.middle.getBlockX(), y, z + arena.middle.getBlockZ()).setType(material);
+							world.getBlockAt(x, y, z).setType(material);
 						}
 					}
 				}
@@ -624,13 +617,13 @@ public class PlayingState extends ArenaState
 
 		if (buildRoof)
 		{
-			for (int x = -radius + 1; x < radius; x++)
+			for (int x = 1; x < this.map.size; x++)
 			{
-				for (int z = -radius + 1; z < radius; z++)
+				for (int z = 1; z < this.map.size; z++)
 				{
-					originalBlock = world.getBlockAt(x + arena.middle.getBlockX(), height, z + arena.middle.getBlockZ()).getState();
-					this.border.add(new BorderBlock(new Vector(x + arena.middle.getBlockX(), height, z + arena.middle.getBlockZ()), material, originalBlock.getType()));
-					world.getBlockAt(x + arena.middle.getBlockX(), height, z + arena.middle.getBlockZ()).setType(material);
+					originalBlock = world.getBlockAt(x, height, z).getState();
+					this.border.add(new BorderBlock(new Vector(x, height, z), material, originalBlock.getType()));
+					world.getBlockAt(x, height, z).setType(material);
 				}
 			}
 		}
@@ -640,7 +633,7 @@ public class PlayingState extends ArenaState
 	{
 		for (BorderBlock block : border)
 		{
-			arena.middle.getWorld().getBlockAt(block.getLocation().toLocation(arena.middle.getWorld())).setType(block.getReplacedBlockType());
+			this.world.getBlockAt(block.getLocation().toLocation(this.world)).setType(block.getReplacedBlockType());
 		}
 		border.clear();
 	}
@@ -702,27 +695,16 @@ public class PlayingState extends ArenaState
 		return this.ticksPassed == -1 ? 0 : this.ticksPassed;
 	}
 
-	public void setMiddle(Location middle)
-	{
-		arena.middle = middle;
-		map.SaveConfig();
-	}
-
-	public Location getMiddle()
-	{
-		return arena.middle;
-	}
-
 	public boolean isBorder(Vector position)
 	{
-		return (position.getBlockX() == (arena.middle.getBlockX() + this.getRadius())) || (position.getBlockX() == (arena.middle.getBlockX() - this.getRadius()))
-				|| (position.getBlockZ() == (arena.middle.getBlockZ() + this.getRadius())) || (position.getBlockZ() == (arena.middle.getBlockZ() - this.getRadius()));
+		return position.getBlockX() == 0 || position.getBlockX() == this.map.size
+				|| position.getBlockZ() == 0 || position.getBlockZ() == this.map.size;
 	}
 
 	public boolean isOnBorder(Vector position)
 	{
-		if (position.getBlockX() == arena.middle.getBlockX() - this.getRadius() + 1 || position.getBlockX() == arena.middle.getBlockX() + this.getRadius() - 1
-				|| position.getBlockZ() == arena.middle.getBlockZ() - this.getRadius() + 1 || position.getBlockZ() == arena.middle.getBlockZ() + this.getRadius() - 1)
+		if (position.getBlockX() == 1 || position.getBlockX() == this.map.size - 1
+				|| position.getBlockZ() == 1 || position.getBlockZ() == this.map.size + 1)
 			return true;
 		return false;
 	}
@@ -934,7 +916,7 @@ public class PlayingState extends ArenaState
 
 		for (int i = 0; i < amount; i++)
 		{
-			while (arena.middle.getWorld().getBlockAt(spawnPoint.getPosition().toLocation(arena.middle.getWorld())).getType() == Material.AIR)
+			while (this.world.getBlockAt(spawnPoint.getPosition().toLocation(this.world)).getType() == Material.AIR)
 				spawnPosition.setY(spawnPosition.getBlockY() - 1);
 
 			spawnPosition.setY(spawnPosition.getBlockY() + 2);
@@ -952,7 +934,7 @@ public class PlayingState extends ArenaState
 		while (i.hasNext() && monsters.size() < map.maxZombieAmount)
 		{
 			SpawnPoint spawnPoint = i.next();
-			net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) arena.middle.getWorld()).getHandle();
+			net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.world).getHandle();
 			EntityCreature monster = null;
 
 			ArrayList<String> possibleEntityTypes = new ArrayList<String>();
@@ -1016,7 +998,7 @@ public class PlayingState extends ArenaState
 						double xd = r.nextDouble() / 10;
 						double zd = r.nextDouble() / 10;
 
-						Location l = new Location(arena.middle.getWorld(), spawnPoint.getPosition().getBlockX() + xd, spawnPoint.getPosition().getBlockY(), spawnPoint.getPosition().getBlockZ() + zd);
+						Location l = new Location(this.world, spawnPoint.getPosition().getBlockX() + xd, spawnPoint.getPosition().getBlockY(), spawnPoint.getPosition().getBlockZ() + zd);
 
 						monster.getBukkitEntity().teleport(l);
 						monsters.put(monster.getBukkitEntity().getUniqueId(), monster);
@@ -1126,10 +1108,10 @@ public class PlayingState extends ArenaState
 				int z = Integer.MAX_VALUE;
 				while (x == Integer.MAX_VALUE || !isValidZombieSpawningPosition(x, z))
 				{
-					x = r.nextInt(map.size - 4) - map.size / 2 + 2;
-					z = r.nextInt(map.size - 4) - map.size / 2 + 2;
+					x = r.nextInt(map.size - 2);
+					z = r.nextInt(map.size - 2);
 				}
-				Location groupLocation = new Location(arena.middle.getWorld(), x + arena.middle.getBlockX(), r.nextInt(map.size) + arena.middle.getBlockY(), z + arena.middle.getBlockZ());
+				Location groupLocation = new Location(this.world, x, r.nextInt(map.size), z);
 				SpawnPoint s = new SpawnPoint(-1, groupLocation.toVector());
 				SpawnMonsterGroup(s, groupAmount);
 

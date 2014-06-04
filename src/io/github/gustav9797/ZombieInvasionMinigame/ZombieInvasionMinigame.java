@@ -114,7 +114,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			this.SaveConfig();
 		}
 		this.Load();
-
+		this.arena = new Arena();
 		getServer().getPluginManager().registerEvents(this, this);
 	}
 
@@ -177,23 +177,24 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 					sender.sendMessage("Usage: /vote <id>");
 				return true;
 			}
-			else if (cmd.getName().equals("zombie"))
+			/*else if (cmd.getName().equals("zombie"))
 			{
 				net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.arena.middle.getWorld()).getHandle();
 				EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-				((EntityBlockBreakingZombie) monster).setPlayingState((PlayingState)arena.getState());
+				((EntityBlockBreakingZombie) monster).setPlayingState((PlayingState) arena.getState());
 				monster.getBukkitEntity().teleport(player.getLocation());
 				mcWorld.addEntity(monster, SpawnReason.CUSTOM);
 				return true;
-			}
+			}*/
 			else if (cmd.getName().equals("createarena"))
 			{
 				if (args.length > 0)
 				{
 					String name = args[0];
+					ZombieArenaMap map = new ZombieArenaMap(name);
 					arena = new Arena();
-					arena.setMiddle(player.getLocation());
 					arena.Save();
+					map.Save();
 					this.Save();
 					sender.sendMessage("Arena " + name + " created!");
 				}
@@ -216,12 +217,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 							state.StopAllActivity();
 							sender.sendMessage("Maintenace mode");
 						}
-						else if (args[0].equals("setlocation"))
-						{
-							arena.setMiddle(player.getLocation());
-							sender.sendMessage("Arena middle was set!");
-						}
-						else if (args[0].equals("setarenaspawn"))
+						else if (args[0].equals("setspawn"))
 						{
 							state.setSpawnLocation(player.getLocation());
 							sender.sendMessage("Arena spawn was set!");
@@ -311,7 +307,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 									{
 										try
 										{
-											Region region = session.getSelection(BukkitUtil.getLocalWorld(arena.getMiddle().getWorld()));
+											Region region = session.getSelection(BukkitUtil.getLocalWorld(player.getWorld()));
 											CuboidRegion newRegion = new CuboidRegion(region.getWorld(), region.getMinimumPoint(), region.getMaximumPoint());
 											PotionEffectType type = PotionEffectType.getByName(typeString);
 											if (typeString.equals("NONE"))
@@ -650,7 +646,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onPlayerJoin(PlayerJoinEvent event)
 	{
-		if (arena == null)
+		if (!(arena.getState() instanceof VotingState) && !(arena.getState() instanceof PlayingState) )
 		{
 			VotingState state = new VotingState(arena);
 			arena.setState(state);
@@ -675,7 +671,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 						int id = manager.getFreeSpawnPointId();
 						manager.AddSpawnPoint(id, new SpawnPoint(id, event.getBlockPlaced().getLocation().toVector()));
 						player.sendMessage("Monster spawnpoint ID " + id + " added!");
-						arena.getMiddle().getWorld().getBlockAt(event.getBlock().getLocation()).setType(Material.AIR);
+						player.getWorld().getBlockAt(event.getBlock().getLocation()).setType(Material.AIR);
 					}
 				}
 			}

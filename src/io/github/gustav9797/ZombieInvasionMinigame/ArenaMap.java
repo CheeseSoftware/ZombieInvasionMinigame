@@ -12,16 +12,19 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
+import com.sk89q.worldedit.CuboidClipboard;
+import com.sk89q.worldedit.data.DataException;
+import com.sk89q.worldedit.schematic.SchematicFormat;
+
 public class ArenaMap
 {
 	protected File folder;
 	public String name;
 
 	// config.yml start
-	public int size = 96;
+	public int size = 96; // diameter
 	public int maxPlayers = 10;
 	public Location spawnLocation = new Location(null, 0, 80, 0, 0, 0);
-	public String schematicFileName = "";
 	public int startAtPlayerCount = 1;
 	public int secondsBeforeStart = 60;
 	public int secondsWaitFirstTimeStart = 30;
@@ -35,17 +38,40 @@ public class ArenaMap
 
 	// potionregions.yml start
 	public List<PotionRegion> potionRegions = new ArrayList<PotionRegion>();
+
 	// potionregions.yml end
 
 	public ArenaMap(String name)
 	{
 		File folder = new File("../maps/" + name);
-		if (folder.isDirectory() && folder.exists())
+		if (!folder.exists())
+			folder.mkdirs();
+		if (folder.isDirectory())
 		{
 			this.folder = folder;
 			this.name = name;
 		}
 		this.Load();
+	}
+
+	public CuboidClipboard getSchematic()
+	{
+		File schematic = new File("../maps" + File.separator + this.name + File.separator + this.name + ".schematic");
+		if (schematic.exists())
+		{
+			try
+			{
+				CuboidClipboard cc = SchematicFormat.MCEDIT.load(schematic);
+				return cc;
+			}
+			catch (DataException | IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+			Bukkit.getLogger().severe("Schematic file for arena " + this.name + " was not found! This will cause the arena to not load properly.");
+		return null;
 	}
 
 	public void Load()
@@ -65,8 +91,8 @@ public class ArenaMap
 	public void LoadConfig()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "config.yml");
-		
-		if(!configFile.exists())
+
+		if (!configFile.exists())
 		{
 			try
 			{
@@ -78,7 +104,7 @@ public class ArenaMap
 				e.printStackTrace();
 			}
 		}
-		
+
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
@@ -87,7 +113,6 @@ public class ArenaMap
 			this.maxPlayers = config.getInt("maxPlayers");
 			Vector spawnPos = config.getVector("spawnLocation");
 			this.spawnLocation = spawnPos.toLocation(null, (float) config.getDouble("spawnLocationYaw"), (float) config.getDouble("SpawnLocationPitch"));
-			this.schematicFileName = config.getString("schematicFileName");
 			this.startAtPlayerCount = config.getInt("startAtPlayerCount");
 			this.secondsBeforeStart = config.getInt("secondsBeforeStart");
 			this.secondsWaitFirstTimeStart = config.getInt("secondsWaitFirstTimeStart");
@@ -109,7 +134,6 @@ public class ArenaMap
 			config.set("spawnLocation", this.spawnLocation.toVector());
 			config.set("spawnLocationYaw", this.spawnLocation.getYaw());
 			config.set("spawnLocationPitch", this.spawnLocation.getPitch());
-			config.set("schematicFileName", this.schematicFileName);
 			config.set("startAtPlayerCount", this.startAtPlayerCount);
 			config.set("secondsBeforeStart", this.secondsBeforeStart);
 			config.set("secondsWaitFirstTimeStart", this.secondsWaitFirstTimeStart);
@@ -124,8 +148,8 @@ public class ArenaMap
 	public void LoadBorder()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "border.yml");
-		
-		if(!configFile.exists())
+
+		if (!configFile.exists())
 		{
 			try
 			{
@@ -137,7 +161,7 @@ public class ArenaMap
 				e.printStackTrace();
 			}
 		}
-		
+
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
@@ -174,8 +198,8 @@ public class ArenaMap
 	public void LoadPotionregionConfig()
 	{
 		File configFile = new File(this.folder.getAbsolutePath() + File.separator + "potionregions.yml");
-		
-		if(!configFile.exists())
+
+		if (!configFile.exists())
 		{
 			try
 			{
@@ -187,7 +211,7 @@ public class ArenaMap
 				e.printStackTrace();
 			}
 		}
-		
+
 		YamlConfiguration config = new YamlConfiguration();
 		try
 		{
