@@ -33,28 +33,33 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 		{
 			return false;
 		}
-		else if (state != null && (this.entity.getGoalTarget() == null || (this.entity.getGoalTarget().getBukkitEntity() instanceof Player &&  state.isSpectator((Player)this.entity.getGoalTarget().getBukkitEntity()))))
-		//else if(this.entity.getGoalTarget() == null)
+		else if (state != null
+				&& (this.entity.getGoalTarget() == null || (this.entity.getGoalTarget().getBukkitEntity() instanceof Player && state
+						.isSpectator((Player) this.entity.getGoalTarget().getBukkitEntity()))))
+		// else if(this.entity.getGoalTarget() == null)
 		{
 			// this.target = (EntityLiving) list.get(0);
-			//Player[] players = Bukkit.getServer().getOnlinePlayers();
+			// Player[] players = Bukkit.getServer().getOnlinePlayers();
 			Player closestPlayer = null;
 			double closestPlayerDistance = Double.MAX_VALUE;
-			for(Player player : state.getPlayers())
+			for (Player player : state.getPlayers())
 			{
-				double distance = player.getLocation().distance(this.entity.getBukkitEntity().getLocation());
-				if(distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL && (state == null || !state.isSpectator(player)))
+				if (player.getWorld().getName().equals(this.entity.getBukkitEntity().getWorld().getName()))
 				{
-					closestPlayerDistance = distance;
-					closestPlayer = player;
+					double distance = player.getLocation().distance(this.entity.getBukkitEntity().getLocation());
+					if (distance < closestPlayerDistance && player.getGameMode() == GameMode.SURVIVAL && (state == null || !state.isSpectator(player)))
+					{
+						closestPlayerDistance = distance;
+						closestPlayer = player;
+					}
 				}
 			}
-			
-			if(closestPlayer != null)
+
+			if (closestPlayer != null)
 			{
-				this.target= ((CraftPlayer)closestPlayer).getHandle();
+				this.target = ((CraftPlayer) closestPlayer).getHandle();
 				this.entity.setGoalTarget(target);
-				//this.entity.target = this.target;
+				// this.entity.target = this.target;
 				return true;
 			}
 		}

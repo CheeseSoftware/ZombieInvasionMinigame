@@ -3,7 +3,6 @@ package io.github.gustav9797.State;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +14,6 @@ import net.minecraft.server.v1_7_R3.EntityCreature;
 import net.minecraft.server.v1_7_R3.EntityPlayer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,6 +80,7 @@ public class PlayingState extends ArenaState
 	private ZombieArenaMap map;
 	private Random r = new Random();
 	private World world;
+	private boolean restarting = false;
 
 	private int sendWavesTaskId = -1;
 	private int tickTaskId = -1;
@@ -152,7 +151,7 @@ public class PlayingState extends ArenaState
 			this.JoinPlayer(player);
 
 		this.Start();
-		
+
 		this.staticTickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
@@ -201,7 +200,7 @@ public class PlayingState extends ArenaState
 
 	public void setSpawnLocation(Location location)
 	{
-		map.spawnLocation = new Location(this.world, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
+		map.spawnLocation = new Location(this.world, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		map.SaveConfig();
 	}
 
@@ -209,7 +208,7 @@ public class PlayingState extends ArenaState
 	{
 		for (Player p : players)
 		{
-			p.sendMessage(ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] " + message);
+			p.sendMessage(arena.getPrefix() + message);
 		}
 	}
 
@@ -230,7 +229,7 @@ public class PlayingState extends ArenaState
 		int groundLevel = 4;
 		EditSession session = new EditSession(new BukkitWorld(this.world), 999999999);
 		File schematic = new File("../maps" + File.separator + this.map.name + File.separator + this.map.name + ".schematic");
-		CuboidClipboard clipboard = new CuboidClipboard(new com.sk89q.worldedit.Vector(this.getSize() - 1, topY, this.getSize() - 1), new com.sk89q.worldedit.Vector(0, groundLevel, 0));
+		CuboidClipboard clipboard = new CuboidClipboard(new com.sk89q.worldedit.Vector(this.getSize() - 2, topY, this.getSize() - 2), new com.sk89q.worldedit.Vector(1, groundLevel, 1));
 		clipboard.copy(session);
 		try
 		{
@@ -251,7 +250,7 @@ public class PlayingState extends ArenaState
 		com.sk89q.worldedit.Vector location = new com.sk89q.worldedit.Vector(1, groundLevel, 1);
 		try
 		{
-			schematic.paste(es, location, false);
+			schematic.paste(es, location, true);
 		}
 		catch (MaxChangedBlocksException e)
 		{
@@ -272,7 +271,7 @@ public class PlayingState extends ArenaState
 			topY--;
 		}
 		else
-			topY = 100;
+			topY = 256;
 		int groundLevel = 4;
 		EditSession es = new EditSession(new BukkitWorld(this.world), 999999999);
 		CuboidRegion region = new CuboidRegion(new com.sk89q.worldedit.Vector(1, groundLevel, 1), new com.sk89q.worldedit.Vector(this.map.size - 1, topY, this.map.size - 1));
@@ -328,15 +327,21 @@ public class PlayingState extends ArenaState
 
 	private void Restart(String message)
 	{
-		Broadcast(message);
-		Reset();
-		for (Player player : players)
+		if (!this.restarting)
 		{
-			ZombieInvasionMinigame.ConnectPlayer(player, "S150");
+			this.restarting = true;
+			Broadcast(message);
+			Reset();
+			for (Player player : players)
+			{
+				ZombieInvasionMinigame.ConnectPlayer(player, "S150");
+			}
+			Bukkit.getLogger().info("Clearing map..");
+			this.ClearMap();
+			Bukkit.getLogger().info("Restoring border..");
+			this.RestoreBorder();
+			Bukkit.getServer().shutdown();
 		}
-		this.RestoreBorder();
-		this.ClearMap();
-		Bukkit.getServer().shutdown();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -353,7 +358,7 @@ public class PlayingState extends ArenaState
 		{
 			p.hidePlayer(player);
 		}
-		player.sendMessage("[ZombieInvasion] You are now a spectator.");
+		player.sendMessage(arena.getPrefix() + "You are now a spectator.");
 
 		for (EntityCreature monster : monsters.values())
 		{
@@ -398,7 +403,7 @@ public class PlayingState extends ArenaState
 		player.setHealth((double) 20);
 		player.setFoodLevel(20);
 		this.TeleportPlayerToRandomPlayer(player);
-		player.sendMessage("[ZombieInvasion] You are now alive again!");
+		player.sendMessage(arena.getPrefix() + "You are now alive again!");
 
 	}
 
@@ -611,44 +616,51 @@ public class PlayingState extends ArenaState
 
 	public void CreateBorder(Material material, int height, boolean buildRoof)
 	{
-		@SuppressWarnings("deprecation")
-		List<Material> replacableMaterials = new ArrayList<Material>(Arrays.asList(Material.AIR, Material.WATER, Material.getMaterial(8), Material.getMaterial(9), Material.LAVA, material));
-		if (!border.isEmpty())
-			RestoreBorder();
-
-		BlockState originalBlock = null;
-
-		for (int y = 0; y <= height; y++)
+		if (material != Material.AIR)
 		{
-			for (int x = 0; x <= this.map.size; x++)
+			// @SuppressWarnings("deprecation")
+			// List<Material> replacableMaterials = new
+			// ArrayList<Material>(Arrays.asList(Material.AIR, Material.WATER,
+			// Material.getMaterial(8), Material.getMaterial(9), Material.LAVA,
+			// material));
+			if (!border.isEmpty())
+				RestoreBorder();
+
+			BlockState originalBlock = null;
+
+			for (int y = 0; y <= height; y++)
 			{
-				for (int z = 0; z <= this.map.size; z++)
+				for (int x = 0; x <= this.map.size; x++)
 				{
-					if (x == 0 || z == 0 || x == this.map.size || z == this.map.size)
+					for (int z = 0; z <= this.map.size; z++)
 					{
-						originalBlock = world.getBlockAt(x, y, z).getState();
-						if (replacableMaterials.contains(originalBlock.getType()))
+						if (x == 0 || z == 0 || x == this.map.size || z == this.map.size)
 						{
+							originalBlock = world.getBlockAt(x, y, z).getState();
+							// if
+							// (replacableMaterials.contains(originalBlock.getType()))
+							// {
 							BorderBlock block = new BorderBlock(originalBlock.getLocation().toVector(), material, originalBlock.getType());
 							while (this.border.contains(block))
 								this.border.remove(block);
 							this.border.add(block);
 							world.getBlockAt(x, y, z).setType(material);
+							// }
 						}
 					}
 				}
 			}
-		}
 
-		if (buildRoof)
-		{
-			for (int x = 1; x < this.map.size; x++)
+			if (buildRoof)
 			{
-				for (int z = 1; z < this.map.size; z++)
+				for (int x = 1; x < this.map.size; x++)
 				{
-					originalBlock = world.getBlockAt(x, height, z).getState();
-					this.border.add(new BorderBlock(new Vector(x, height, z), material, originalBlock.getType()));
-					world.getBlockAt(x, height, z).setType(material);
+					for (int z = 1; z < this.map.size; z++)
+					{
+						originalBlock = world.getBlockAt(x, height, z).getState();
+						this.border.add(new BorderBlock(new Vector(x, height, z), material, originalBlock.getType()));
+						world.getBlockAt(x, height, z).setType(material);
+					}
 				}
 			}
 		}
@@ -834,8 +846,6 @@ public class PlayingState extends ArenaState
 		{
 			RemovePlayer(event.getPlayer(), "quit");
 		}
-		if (this.spectators.size() >= this.players.size() - 1)
-			Restart("Everyone have died. Restarting..");
 	}
 
 	@EventHandler
@@ -847,7 +857,7 @@ public class PlayingState extends ArenaState
 			event.getDrops().clear();
 			if (this.isRunning() && !this.isStarting())
 			{
-				if (this.spectators.size() >= this.players.size() - 1)
+				if (this.spectators.size() + 1 >= this.players.size())
 					Restart("Everyone have died. Restarting..");
 				else
 					this.MakeSpectator(player);
@@ -896,7 +906,7 @@ public class PlayingState extends ArenaState
 			if (this.isBorder(event.getBlock().getLocation().toVector()))
 			{
 				event.setCancelled(true);
-				event.getPlayer().sendMessage("Don't try to escape. You are ment to die with the monsters.");
+				event.getPlayer().sendMessage(arena.getPrefix() + "Don't try to escape. You are ment to die with the monsters.");
 			}
 		}
 	}
@@ -910,7 +920,7 @@ public class PlayingState extends ArenaState
 			if (isOnBorder(event.getBlockPlaced().getLocation().toVector()))
 			{
 				event.setCancelled(true);
-				player.sendMessage("Don't try to build on the border. You will die in here.");
+				player.sendMessage(arena.getPrefix() + "Don't try to build on the border. You will die in here.");
 			}
 		}
 	}

@@ -26,7 +26,7 @@ import io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame;
 public class VotingState extends ArenaState
 {
 	private List<Player> votingPlayers = new ArrayList<Player>();
-	private int ticksBetweenVotingMessage = 100;
+	private int ticksBetweenVotingMessage = 180;
 	private int ticksVotingTotal = 600;
 	private int ticksVotingCurrent = 0;
 	private int votingTaskId = -1;
@@ -51,7 +51,7 @@ public class VotingState extends ArenaState
 					// End voting
 					voting = false;
 					final ArenaMap mostVotes = DetermineMapWon();
-					arena.Broadcast(votingPlayers, "Map " + mostVotes.name + " has won! Starting game in 10 seconds..");
+					Broadcast("Map " + mostVotes.name + " has won! Starting game in 10 seconds..");
 					startingTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 					{
 						@Override
@@ -59,9 +59,8 @@ public class VotingState extends ArenaState
 						{
 							if (currentStartingTicks != -1)
 							{
-								currentStartingTicks += 20;
 								if (currentStartingTicks >= 100)
-									arena.Broadcast(votingPlayers, (10 - currentStartingTicks / 20) + "..");
+									Broadcast((10 - currentStartingTicks / 20) + "..");
 								if (currentStartingTicks >= 200)
 								{
 									currentStartingTicks = -1;
@@ -69,6 +68,7 @@ public class VotingState extends ArenaState
 									Bukkit.getScheduler().cancelTask(startingTaskId);
 									return;
 								}
+								currentStartingTicks += 20;
 							}
 						}
 					}, 0, 20);
@@ -78,10 +78,26 @@ public class VotingState extends ArenaState
 				else if (ticksVotingCurrent % ticksBetweenVotingMessage == 0)
 				{
 					String[] votingMessage = getVotingMessage();
-					arena.Broadcast(votingPlayers, votingMessage);
+					Broadcast(votingMessage);
 				}
 			}
 		}, 60, 10);
+	}
+	
+	private void Broadcast(String message)
+	{
+		for (Player p : this.votingPlayers)
+		{
+			p.sendMessage(arena.getPrefix() + message);
+		}
+	}
+	
+	private void Broadcast(String[] message)
+	{
+		for (Player p : this.votingPlayers)
+		{
+			p.sendMessage(message);
+		}
 	}
 
 	private ArenaMap DetermineMapWon()
@@ -104,7 +120,7 @@ public class VotingState extends ArenaState
 		String[] votingMessage = new String[this.maps.size() + 4];
 		votingMessage[0] = ChatColor.DARK_AQUA + "---===" + ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + ChatColor.BOLD + "Voting" + ChatColor.DARK_GRAY + "]" + ChatColor.DARK_AQUA + "===---";
 		votingMessage[this.maps.size() + 1] = ChatColor.GRAY + "There are: " + ChatColor.RED + this.votingPlayers.size() + ChatColor.GRAY + " waiting to play.";
-		votingMessage[this.maps.size() + 2] = ChatColor.GRAY + "Time remaining: " + ChatColor.RED + " " + (10 - currentStartingTicks / 20) + ChatColor.GRAY + " seconds.";
+		votingMessage[this.maps.size() + 2] = ChatColor.GRAY + "Time remaining: " + ChatColor.RED + " " + ((this.ticksVotingTotal - this.ticksVotingCurrent) / 20) + ChatColor.GRAY + " seconds.";
 		votingMessage[this.maps.size() + 3] = ChatColor.GRAY + "Use " + ChatColor.RED + "/vote <id>" + ChatColor.GRAY + " to vote!";
 		int i = 1;
 		for (Map.Entry<Integer, Map.Entry<ArenaMap, Integer>> map : this.maps.entrySet())
@@ -148,20 +164,20 @@ public class VotingState extends ArenaState
 				{
 					player.setMetadata("voted", new FixedMetadataValue(ZombieInvasionMinigame.getPlugin(), true));
 					maps.get(id).setValue(maps.get(id).getValue() + 1);
-					player.sendMessage("Thanks for voting!");
+					player.sendMessage(arena.getPrefix() + "Thanks for voting!");
 					for (Player temp : this.votingPlayers)
 						if (!temp.hasMetadata("voted"))
 							return;
 					this.ticksVotingCurrent = Integer.MAX_VALUE / 2;
 				}
 				else
-					player.sendMessage("That map doesn't exist.");
+					player.sendMessage(arena.getPrefix() + "That map doesn't exist.");
 			}
 			else
-				player.sendMessage("You have already voted.");
+				player.sendMessage(arena.getPrefix() + "You have already voted.");
 		}
 		else
-			player.sendMessage("Voting time has ended.");
+			player.sendMessage(arena.getPrefix() + "Voting time has ended.");
 	}
 
 	@Override
@@ -175,15 +191,21 @@ public class VotingState extends ArenaState
 	{
 		if (voting)
 		{
-			Player player = event.getPlayer();
+			final Player player = event.getPlayer();
 			this.votingPlayers.add(player);
 			World lobbyWorld = arena.getLobbyWorld();
 			if (lobbyWorld == null)
-				player.sendMessage("Could not find lobby world!");
+				player.sendMessage(arena.getPrefix() + "Could not find lobby world!");
 			else
 				player.teleport(lobbyWorld.getSpawnLocation());
-
-			//player.sendMessage(this.getVotingMessage());
+			Bukkit.getScheduler().scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					player.sendMessage(getVotingMessage());
+				}
+			});
 		}
 	}
 
@@ -192,6 +214,8 @@ public class VotingState extends ArenaState
 	{
 		if (this.votingPlayers.contains(event.getPlayer()))
 			this.votingPlayers.remove(event.getPlayer());
+		if(this.votingPlayers.size() <= 0)
+			Bukkit.getServer().shutdown();
 	}
 
 	@EventHandler

@@ -2,12 +2,10 @@ package io.github.gustav9797.ZombieInvasionMinigame;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import io.github.gustav9797.State.*;
@@ -21,17 +19,10 @@ public class Arena
 		this.state = new IdleState(this);
 		this.Load();
 	}
-
-	public void Broadcast(List<Player> players, String message)
+	
+	public String getPrefix()
 	{
-		for (Player player : players)
-			player.sendMessage(ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] " + message);
-	}
-
-	public void Broadcast(List<Player> players, String[] message)
-	{
-		for (Player player : players)
-			player.sendMessage(message);
+		return ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] ";
 	}
 
 	public Vector getLocation()
