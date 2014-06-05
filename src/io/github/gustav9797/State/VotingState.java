@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -100,14 +101,15 @@ public class VotingState extends ArenaState
 
 	private String[] getVotingMessage()
 	{
-		String[] votingMessage = new String[this.maps.size() + 3];
-		votingMessage[0] = "-----------------------";
-		votingMessage[this.maps.size() + 1] = "-Use /vote <id> to vote!-";
-		votingMessage[this.maps.size() + 2] = "-----------------------";
+		String[] votingMessage = new String[this.maps.size() + 4];
+		votingMessage[0] = ChatColor.DARK_AQUA + "---===" + ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + ChatColor.BOLD + "Voting" + ChatColor.DARK_GRAY + "]" + ChatColor.DARK_AQUA + "===---";
+		votingMessage[this.maps.size() + 1] = ChatColor.GRAY + "There are: " + ChatColor.RED + this.votingPlayers.size() + ChatColor.GRAY + " waiting to play.";
+		votingMessage[this.maps.size() + 2] = ChatColor.GRAY + "Time remaining: " + ChatColor.RED + " " + (10 - currentStartingTicks / 20) + ChatColor.GRAY + " seconds.";
+		votingMessage[this.maps.size() + 3] = ChatColor.GRAY + "Use " + ChatColor.RED + "/vote <id>" + ChatColor.GRAY + " to vote!";
 		int i = 1;
 		for (Map.Entry<Integer, Map.Entry<ArenaMap, Integer>> map : this.maps.entrySet())
 		{
-			votingMessage[i] = "ID: " + map.getKey() + " Arena: " + map.getValue().getKey().name + " Votes: " + map.getValue().getValue();
+			votingMessage[i] = ChatColor.AQUA + "> " + ChatColor.RED + map.getKey() + ChatColor.GRAY + ": " + ChatColor.DARK_AQUA + map.getValue().getKey().name + " - " + ChatColor.AQUA + map.getValue().getValue() + ChatColor.GRAY + " votes";
 			i++;
 		}
 		return votingMessage;
@@ -181,7 +183,7 @@ public class VotingState extends ArenaState
 			else
 				player.teleport(lobbyWorld.getSpawnLocation());
 
-			player.sendMessage(this.getVotingMessage());
+			//player.sendMessage(this.getVotingMessage());
 		}
 	}
 
@@ -191,11 +193,11 @@ public class VotingState extends ArenaState
 		if (this.votingPlayers.contains(event.getPlayer()))
 			this.votingPlayers.remove(event.getPlayer());
 	}
-	
+
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		if(voting)
+		if (voting)
 		{
 			event.setRespawnLocation(arena.getLobbyWorld().getSpawnLocation());
 		}
