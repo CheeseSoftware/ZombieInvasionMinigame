@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import io.github.gustav9797.Zombie.ZombieArenaMap;
@@ -55,13 +56,18 @@ public class VotingState extends ArenaState
 						@Override
 						public void run()
 						{
-							currentStartingTicks += 20;
-							if (currentStartingTicks >= 100)
-								arena.Broadcast(votingPlayers, currentStartingTicks / 20 + "..");
-							if (currentStartingTicks >= 200)
+							if (currentStartingTicks != -1)
 							{
-								arena.setState(new PlayingState(arena, votingPlayers, (ZombieArenaMap) mostVotes));
-								Bukkit.getScheduler().cancelTask(startingTaskId);
+								currentStartingTicks += 20;
+								if (currentStartingTicks >= 100)
+									arena.Broadcast(votingPlayers, (10 - currentStartingTicks / 20) + "..");
+								if (currentStartingTicks >= 200)
+								{
+									currentStartingTicks = -1;
+									arena.setState(new PlayingState(arena, votingPlayers, (ZombieArenaMap) mostVotes));
+									Bukkit.getScheduler().cancelTask(startingTaskId);
+									return;
+								}
 							}
 						}
 					}, 0, 20);
@@ -159,7 +165,7 @@ public class VotingState extends ArenaState
 	@Override
 	public String getMotd()
 	{
-		return "Voting";
+		return this.voting ? "Voting" : "Warmup";
 	}
 
 	@EventHandler
@@ -177,8 +183,6 @@ public class VotingState extends ArenaState
 
 			player.sendMessage(this.getVotingMessage());
 		}
-		else
-			event.getPlayer().kickPlayer("Oops! Game has already begun!");
 	}
 
 	@EventHandler
@@ -186,6 +190,15 @@ public class VotingState extends ArenaState
 	{
 		if (this.votingPlayers.contains(event.getPlayer()))
 			this.votingPlayers.remove(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent event)
+	{
+		if(voting)
+		{
+			event.setRespawnLocation(arena.getLobbyWorld().getSpawnLocation());
+		}
 	}
 
 }

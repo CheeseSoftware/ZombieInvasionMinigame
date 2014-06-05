@@ -1,5 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame;
 
+import io.github.gustav9797.State.IdleState;
 import io.github.gustav9797.State.PlayingState;
 import io.github.gustav9797.State.VotingState;
 import io.github.gustav9797.Zombie.CustomEntityType;
@@ -646,7 +647,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onPlayerJoin(PlayerJoinEvent event)
 	{
-		if (!(arena.getState() instanceof VotingState) && !(arena.getState() instanceof PlayingState) )
+		if (arena.getState() instanceof IdleState)
 		{
 			VotingState state = new VotingState(arena);
 			arena.setState(state);

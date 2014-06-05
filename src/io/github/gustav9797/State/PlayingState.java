@@ -39,6 +39,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -77,7 +78,7 @@ import io.github.gustav9797.ZombieInvasionMinigame.Entity.ICustomMonster;
 
 public class PlayingState extends ArenaState
 {
-	private List<Player> players;
+	private List<Player> players = new ArrayList<Player>();
 	private ZombieArenaMap map;
 	private Random r = new Random();
 	private World world;
@@ -109,7 +110,7 @@ public class PlayingState extends ArenaState
 	public PlayingState(Arena arena, List<Player> toTransfer, ZombieArenaMap map)
 	{
 		super(arena);
-		this.players = toTransfer;
+		List<Player> tempPlayers = new ArrayList<Player>(toTransfer);
 		this.map = map;
 		this.world = Bukkit.getServer().getWorld("world");
 		if (this.world == null)
@@ -141,12 +142,25 @@ public class PlayingState extends ArenaState
 		armorTypes[4][1] = Material.DIAMOND_CHESTPLATE;
 		armorTypes[4][2] = Material.DIAMOND_LEGGINGS;
 		armorTypes[4][3] = Material.DIAMOND_BOOTS;
-		
-		for(Player player : toTransfer)
-			player.teleport(this.getSpawnLocation());
-		
+
+		this.scoreboard = new ArenaScoreboard(this);
+
 		this.LoadMap();
+		this.CreateBorder(map.borderMaterial, map.borderHeight, map.borderHasRoof);
+
+		for (Player player : tempPlayers)
+			this.JoinPlayer(player);
+
 		this.Start();
+		
+		this.staticTickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				StaticTick();
+			}
+		}, 0L, 10L);
 	}
 
 	@Override
@@ -317,7 +331,11 @@ public class PlayingState extends ArenaState
 		Broadcast(message);
 		Reset();
 		for (Player player : players)
+		{
 			ZombieInvasionMinigame.ConnectPlayer(player, "S150");
+		}
+		this.RestoreBorder();
+		this.ClearMap();
 		Bukkit.getServer().shutdown();
 	}
 
@@ -470,7 +488,7 @@ public class PlayingState extends ArenaState
 	public void SendWaves()
 	{
 		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-		this.sendWavesTaskId = scheduler.scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+		scheduler.scheduleSyncRepeatingTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 		{
 			@Override
 			public void run()
@@ -490,6 +508,8 @@ public class PlayingState extends ArenaState
 			}
 		}, 0L, 1L);
 
+		this.currentWave = 1;
+		this.Broadcast("Wave 1 is coming!");
 		this.SendWave(map.startWave);
 	}
 
@@ -500,13 +520,18 @@ public class PlayingState extends ArenaState
 		int minutesPassed = Math.round(ticksPassed / 20 / 60);
 		if (minutesPassed != oldMinutesPassed)
 		{
-			this.Broadcast(minutesPassed + " minutes have passed!");
+			if (minutesPassed != 0)
+			{
+				if (minutesPassed == 1)
+					this.Broadcast(minutesPassed + " minute has passed!");
+				else
+					this.Broadcast(minutesPassed + " minutes have passed!");
+			}
 			oldMinutesPassed = minutesPassed;
 		}
+
 		if (this.sendWavesTaskId != -1)
 			this.ticksUntilNextWave += 1;
-		else
-			this.ticksUntilNextWave = 0;
 
 		if (this.currentWave >= 200)
 			this.Reset();
@@ -633,7 +658,7 @@ public class PlayingState extends ArenaState
 	{
 		for (BorderBlock block : border)
 		{
-			this.world.getBlockAt(block.getLocation().toLocation(this.world)).setType(block.getReplacedBlockType());
+			this.world.getBlockAt(block.getLocation().toLocation(this.world)).setType(Material.AIR);
 		}
 		border.clear();
 	}
@@ -697,14 +722,12 @@ public class PlayingState extends ArenaState
 
 	public boolean isBorder(Vector position)
 	{
-		return position.getBlockX() == 0 || position.getBlockX() == this.map.size
-				|| position.getBlockZ() == 0 || position.getBlockZ() == this.map.size;
+		return position.getBlockX() == 0 || position.getBlockX() == this.map.size || position.getBlockZ() == 0 || position.getBlockZ() == this.map.size;
 	}
 
 	public boolean isOnBorder(Vector position)
 	{
-		if (position.getBlockX() == 1 || position.getBlockX() == this.map.size - 1
-				|| position.getBlockZ() == 1 || position.getBlockZ() == this.map.size + 1)
+		if (position.getBlockX() == 1 || position.getBlockX() == this.map.size - 1 || position.getBlockZ() == 1 || position.getBlockZ() == this.map.size + 1)
 			return true;
 		return false;
 	}
@@ -747,7 +770,13 @@ public class PlayingState extends ArenaState
 			if (!isSpectator(poss) && poss != player)
 				possiblePlayers.add(poss);
 		if (possiblePlayers.size() > 0)
-			player.teleport(possiblePlayers.get(r.nextInt(possiblePlayers.size())));
+		{
+			Player possiblePlayer = possiblePlayers.get(r.nextInt(possiblePlayers.size()));
+			if (possiblePlayer.getWorld().equals(player.getWorld()))
+				player.teleport(possiblePlayer);
+			else
+				player.teleport(this.getSpawnLocation());
+		}
 		else
 			player.teleport(this.getSpawnLocation());
 	}
@@ -784,13 +813,18 @@ public class PlayingState extends ArenaState
 		CheckSpectators();
 		if (players.size() <= 0)
 		{
-			this.Reset();
-			this.LoadMap();
+			this.Restart("No player left, restarting");
 		}
 		player.getInventory().clear();
 		player.updateInventory();
 		this.Broadcast(player.getName() + " has " + reason + "!");
 		ZombieInvasionMinigame.ConnectPlayer(player, "S150");
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event)
+	{
+		this.JoinPlayer(event.getPlayer());
 	}
 
 	@EventHandler
@@ -800,6 +834,8 @@ public class PlayingState extends ArenaState
 		{
 			RemovePlayer(event.getPlayer(), "quit");
 		}
+		if (this.spectators.size() >= this.players.size() - 1)
+			Restart("Everyone have died. Restarting..");
 	}
 
 	@EventHandler
@@ -1013,9 +1049,9 @@ public class PlayingState extends ArenaState
 
 	private boolean isValidZombieSpawningPosition(int x, int z)
 	{
-		if (x > ((map.size / 2 * -1) + 5) && x < (map.size / 2) - 10)
+		if (x > 5 && x < map.size - 5)
 		{
-			if (z > ((map.size / 2 * -1) + 5) && z < (map.size / 2) - 10)
+			if (z > 5 && z < map.size - 5)
 				return false;
 		}
 		return true;
@@ -1108,8 +1144,8 @@ public class PlayingState extends ArenaState
 				int z = Integer.MAX_VALUE;
 				while (x == Integer.MAX_VALUE || !isValidZombieSpawningPosition(x, z))
 				{
-					x = r.nextInt(map.size - 2);
-					z = r.nextInt(map.size - 2);
+					x = r.nextInt(map.size - 2) + 1;
+					z = r.nextInt(map.size - 2) + 1;
 				}
 				Location groupLocation = new Location(this.world, x, r.nextInt(map.size), z);
 				SpawnPoint s = new SpawnPoint(-1, groupLocation.toVector());

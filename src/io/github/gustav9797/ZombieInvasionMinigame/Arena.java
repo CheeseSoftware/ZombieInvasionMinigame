@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -24,7 +25,7 @@ public class Arena
 	public void Broadcast(List<Player> players, String message)
 	{
 		for (Player player : players)
-			player.sendMessage("&f[&9ZombieInvasion&f] " + message);
+			player.sendMessage(ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] " + message);
 	}
 
 	public void Broadcast(List<Player> players, String[] message)
@@ -54,7 +55,7 @@ public class Arena
 
 	public World getLobbyWorld()
 	{
-		return Bukkit.getWorld("lobby");
+		return Bukkit.getWorld("world_lobby");
 	}
 
 	public void setState(IArenaState state)
