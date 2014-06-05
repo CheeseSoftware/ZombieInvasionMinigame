@@ -329,6 +329,7 @@ public class PlayingState extends ArenaState
 	{
 		if (!this.restarting)
 		{
+			Bukkit.getLogger().info("Restarting server. Reason: " + message);
 			this.restarting = true;
 			Broadcast(message);
 			Reset();

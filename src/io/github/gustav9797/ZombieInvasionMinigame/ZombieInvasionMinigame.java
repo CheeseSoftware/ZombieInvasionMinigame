@@ -123,7 +123,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	public void onDisable()
 	{
 		this.SaveConfig();
-		if (arena.getState() instanceof PlayingState)
+		/*if (arena.getState() instanceof PlayingState)
 		{
 			PlayingState state = (PlayingState) arena.getState();
 			state.Reset();
@@ -136,7 +136,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 					ConnectPlayer(player, "S150");
 				}
 			}
-		}
+		}*/
 	}
 
 	public static int tryParse(String text)

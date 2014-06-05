@@ -37,6 +37,7 @@ public class SpawnPointManager
 			}
 			this.Save();
 		}
+		this.Load();
 	}
 
 	public void Save()
