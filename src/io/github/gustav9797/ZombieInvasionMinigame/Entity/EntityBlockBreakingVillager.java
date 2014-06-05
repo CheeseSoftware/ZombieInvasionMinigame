@@ -136,9 +136,9 @@ public class EntityBlockBreakingVillager extends EntityVillager implements ICust
 		if (state != null)
 			this.targetSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, state.getSpawnLocation()));
 		if (this.getProfession() == 3)
-			this.goalSelector.a(3, new PathfinderGoalBreakBlock(this, state, true));
+			this.goalSelector.a(3, new PathfinderGoalBreakBlock(this, state, 40, true));
 		else if(this.getProfession() == 5)
-			this.goalSelector.a(3, new PathfinderGoalBreakBlock(this, state, (random.nextInt(8) == 0)));
+			this.goalSelector.a(3, new PathfinderGoalBreakBlock(this, state, 5, true));
 	}
 
 	public EntityHuman findNearbyVulnerablePlayer(double d0, double d1, double d2)
