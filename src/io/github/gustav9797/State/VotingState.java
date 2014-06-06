@@ -83,7 +83,7 @@ public class VotingState extends ArenaState
 			}
 		}, 60, 10);
 	}
-	
+
 	private void Broadcast(String message)
 	{
 		for (Player p : this.votingPlayers)
@@ -91,7 +91,7 @@ public class VotingState extends ArenaState
 			p.sendMessage(arena.getPrefix() + message);
 		}
 	}
-	
+
 	private void Broadcast(String[] message)
 	{
 		for (Player p : this.votingPlayers)
@@ -125,7 +125,8 @@ public class VotingState extends ArenaState
 		int i = 1;
 		for (Map.Entry<Integer, Map.Entry<ArenaMap, Integer>> map : this.maps.entrySet())
 		{
-			votingMessage[i] = ChatColor.AQUA + "> " + ChatColor.RED + map.getKey() + ChatColor.GRAY + ": " + ChatColor.DARK_AQUA + map.getValue().getKey().name + " - " + ChatColor.AQUA + map.getValue().getValue() + ChatColor.GRAY + " votes";
+			votingMessage[i] = ChatColor.AQUA + "> " + ChatColor.RED + map.getKey() + ChatColor.GRAY + ": " + ChatColor.DARK_AQUA + map.getValue().getKey().name + " - " + ChatColor.AQUA
+					+ map.getValue().getValue() + ChatColor.GRAY + " votes";
 			i++;
 		}
 		return votingMessage;
@@ -189,41 +190,47 @@ public class VotingState extends ArenaState
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event)
 	{
-		if (voting)
+		if (arena.getState() instanceof VotingState)
 		{
-			final Player player = event.getPlayer();
-			this.votingPlayers.add(player);
-			World lobbyWorld = arena.getLobbyWorld();
-			if (lobbyWorld == null)
-				player.sendMessage(arena.getPrefix() + "Could not find lobby world!");
-			else
-				player.teleport(lobbyWorld.getSpawnLocation());
-			Bukkit.getScheduler().scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
+			if (voting)
 			{
-				@Override
-				public void run()
+				final Player player = event.getPlayer();
+				this.votingPlayers.add(player);
+				World lobbyWorld = arena.getLobbyWorld();
+				if (lobbyWorld == null)
+					player.sendMessage(arena.getPrefix() + "Could not find lobby world!");
+				else
+					player.teleport(lobbyWorld.getSpawnLocation());
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ZombieInvasionMinigame.getPlugin(), new Runnable()
 				{
-					player.sendMessage(getVotingMessage());
-				}
-			});
+					@Override
+					public void run()
+					{
+						player.sendMessage(getVotingMessage());
+					}
+				});
+			}
+			else
+				event.getPlayer().kickPlayer("Game is loading, rejoin when it's finished.");
 		}
-		else
-			event.getPlayer().kickPlayer("Game is loading, rejoin when it's finished.");
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
-		if (this.votingPlayers.contains(event.getPlayer()))
-			this.votingPlayers.remove(event.getPlayer());
-		if(this.votingPlayers.size() <= 0)
-			Bukkit.getServer().shutdown();
+		if (arena.getState() instanceof VotingState)
+		{
+			if (this.votingPlayers.contains(event.getPlayer()))
+				this.votingPlayers.remove(event.getPlayer());
+			if (this.votingPlayers.size() <= 0)
+				Bukkit.getServer().shutdown();
+		}
 	}
 
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event)
 	{
-		if (voting)
+		if (arena.getState() instanceof VotingState)
 		{
 			event.setRespawnLocation(arena.getLobbyWorld().getSpawnLocation());
 		}
