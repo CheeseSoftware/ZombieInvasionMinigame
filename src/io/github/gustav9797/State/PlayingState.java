@@ -856,32 +856,6 @@ public class PlayingState extends ArenaState
 	public void onPlayerDeath(PlayerDeathEvent event)
 	{
 		Player player = event.getEntity();
-		CraftZombie zombie;
-
-		net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.getMiddle().getWorld()).getHandle();
-		EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-		((EntityBlockBreakingZombie)monster).setArena(this);
-
-		String pl = player.getName();
-		
-        ItemStack skull = new ItemStack(Material.SKULL_ITEM);
-        skull.setDurability((short)3);
-        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwner(pl);
-        skullMeta.setDisplayName(pl);
-        skull.setItemMeta(skullMeta);
-
-        zombie = (CraftZombie)monster.getBukkitEntity();
-        
-        zombie.getEquipment().setHelmet(skull);
-        zombie.setCustomName(player.getName());
-        zombie.setCustomNameVisible(true);
-        zombie.setCanPickupItems(true);
-
-        this.monsters.put(zombie.getUniqueId(), monster);
-		monster.getBukkitEntity().teleport(player.getLocation());
-		mcWorld.addEntity(monster, SpawnReason.CUSTOM);
-		
 		if (players.contains(player))
 		{
 			event.getDrops().clear();
@@ -890,7 +864,33 @@ public class PlayingState extends ArenaState
 				if (this.spectators.size() + 1 >= this.players.size())
 					Restart("Everyone have died. Restarting..");
 				else
+				{
+					CraftZombie zombie;
+
+					net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.world).getHandle();
+					EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
+					((EntityBlockBreakingZombie)monster).setPlayingState(this);
+					
+			        ItemStack skull = new ItemStack(Material.SKULL_ITEM);
+			        skull.setDurability((short)3);
+			        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+			        skullMeta.setOwner(player.getName());
+			        skullMeta.setDisplayName(player.getName());
+			        skull.setItemMeta(skullMeta);
+
+			        zombie = (CraftZombie)monster.getBukkitEntity();
+			        
+			        zombie.getEquipment().setHelmet(skull);
+			        zombie.setCustomName(player.getName());
+			        zombie.setCustomNameVisible(true);
+			        zombie.setCanPickupItems(true);
+
+			        this.monsters.put(zombie.getUniqueId(), monster);
+					monster.getBukkitEntity().teleport(player.getLocation());
+					mcWorld.addEntity(monster, SpawnReason.CUSTOM);
+					
 					this.MakeSpectator(player);
+				}
 			}
 		}
 	}
