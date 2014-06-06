@@ -4,14 +4,18 @@ version: 0.1
 softdepend: [OstEconomyPlugin, WorldEdit]
 load: POSTWORLD
 commands:
+   vote:
+      description: Vote for an arena;
+      permission: zombieinvasion.player
+      permission-message: You don't have zombieinvasion.player
    zombieinvasion:
       description: Shows version info.
-      permission: zombieinvasion.zombieinvasion
-      permission-message: You don't have zombieinvasion.zombieinvasion
+      permission: zombieinvasion.player
+      permission-message: You don't have zombieinvasion.player
    listarenas:
       description: Lists the loaded arenas.
-      permission: zombieinvasion.listarenas
-      permission-message: You don't have zombieinvasion.listarenas
+      permission: zombieinvasion.player
+      permission-message: You don't have zombieinvasion.player
    createarena:
       description: Creates an arena.
       permission: zombieinvasion.createarena

@@ -1,6 +1,6 @@
 package io.github.gustav9797.ZombieInvasionMinigame.Entity;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalFindBreakBlock;
 import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoalWalkToTile;
 
@@ -63,11 +63,11 @@ public class EntityBlockBreakingSkeleton extends EntitySkeleton implements ICust
 
 	}
 
-	public void setArena(Arena arena)
+	public void setPlayingState(PlayingState state)
 	{
-		if (arena != null)
-			this.targetSelector.a(4, new PathfinderGoalWalkToTile(this, 1.2F, arena.getSpawnLocation()));
-		this.goalSelector.a(3, new PathfinderGoalFindBreakBlock(this, arena, 5));
+		if (state != null)
+			this.targetSelector.a(4, new PathfinderGoalWalkToTile(this, 1.2F, state.getSpawnLocation()));
+		this.goalSelector.a(3, new PathfinderGoalFindBreakBlock(this, state, 5));
 	}
 
 	public EntityHuman findNearbyVulnerablePlayer(double d0, double d1, double d2)

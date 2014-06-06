@@ -1,11 +1,13 @@
 package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
-import io.github.gustav9797.ZombieInvasionMinigame.Arena;
+import io.github.gustav9797.State.PlayingState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,9 +29,12 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	float h;
 	Random r = new Random();
 	int i;
-	Arena arena;
+	PlayingState playingState;
 	int j = -1;
 	boolean isStrongBreaker; // false: only breakable materials
+	
+	int breakEnergy = 0;
+	int breakSpeed;
 	
 	protected EntityInsentient entity;
 	protected int x;
@@ -41,6 +46,62 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	protected static List<Vector> possiblePositions = new ArrayList<Vector>(Arrays.asList(new Vector(-1, 0, 0), new Vector(-1, 1, 0), new Vector(1, 0, 0), new Vector(1, 1, 0), new Vector(0, 0, -1),
 			new Vector(0, 1, -1), new Vector(0, 0, 1), new Vector(0, 1, 1), new Vector(0, 2, 0)));
 
+	protected static final Map<Material, Integer> hardnessList = new HashMap<Material, Integer>();
+	static
+	{
+		hardnessList.put(Material.OBSIDIAN, 2*1000);
+		//hardnessList.put(Material.ANVIL, 100);
+		hardnessList.put(Material.COAL_BLOCK, 100);
+		hardnessList.put(Material.DIAMOND_BLOCK, 2*100);
+		hardnessList.put(Material.EMERALD_BLOCK, 2*100);
+		hardnessList.put(Material.IRON_BLOCK, 2*100);
+		hardnessList.put(Material.REDSTONE_BLOCK, 100);
+		hardnessList.put(Material.IRON_FENCE, 2*100);
+		hardnessList.put(Material.IRON_DOOR, 2*100);
+		hardnessList.put(Material.WEB, 80);
+		hardnessList.put(Material.DISPENSER, 2*70);
+		hardnessList.put(Material.DROPPER, 2*70);
+		hardnessList.put(Material.FURNACE, 2*0);
+		hardnessList.put(Material.GOLD_BLOCK, 2*60);
+		hardnessList.put(Material.COAL_ORE, 2*60);
+		hardnessList.put(Material.DRAGON_EGG, 60);
+		hardnessList.put(Material.DIAMOND_ORE, 2*60);
+		hardnessList.put(Material.EMERALD_ORE, 2*60);
+		hardnessList.put(Material.ENDER_STONE, 2*60);
+		hardnessList.put(Material.GOLD_ORE, 2*60);
+		hardnessList.put(Material.IRON_ORE, 2*60);
+		hardnessList.put(Material.LAPIS_BLOCK, 2*60);
+		hardnessList.put(Material.LAPIS_ORE, 2*60);
+		hardnessList.put(Material.QUARTZ_ORE, 2*60);
+		hardnessList.put(Material.REDSTONE_ORE, 2*60);
+		hardnessList.put(Material.TRAP_DOOR, 60);
+		hardnessList.put(Material.WOOD_DOOR, 60);
+		//hardnessList.put(Material.BRICK_STAIRS, 40); ??
+		hardnessList.put(Material.CLAY_BRICK, 2*40);
+		hardnessList.put(Material.COBBLESTONE, 2*40);
+		hardnessList.put(Material.COBBLESTONE_STAIRS, 2*40);
+		hardnessList.put(Material.COBBLE_WALL, 2*40);
+		hardnessList.put(Material.FENCE, 40);
+		hardnessList.put(Material.FENCE_GATE, 40);
+		hardnessList.put(Material.JUKEBOX, 40);
+		hardnessList.put(Material.MOSSY_COBBLESTONE, 2*40);
+		hardnessList.put(Material.NETHER_BRICK, 2*40);
+		hardnessList.put(Material.NETHER_FENCE, 2*40);
+		hardnessList.put(Material.NETHER_BRICK_STAIRS, 2*40);
+		hardnessList.put(Material.STONE_PLATE, 2*40);
+		hardnessList.put(Material.WOOD, 40);
+		//hardnessList.put(Material., 40); WOOD_PLANKS?
+		hardnessList.put(Material.WOOD_PLATE, 40);
+		hardnessList.put(Material.WOOD_STAIRS, 40*2);
+		hardnessList.put(Material.BOOKSHELF, 30);
+		hardnessList.put(Material.STONE, 30*2);
+		hardnessList.put(Material.BRICK, 30*2);
+		hardnessList.put(Material.BRICK_STAIRS, 30*2);
+		hardnessList.put(Material.STONE, 30*2);
+		hardnessList.put(Material.HARD_CLAY, 25*2);
+		hardnessList.put(Material.STAINED_CLAY, 25*2);
+	}
+	
 	//
 	@SuppressWarnings("deprecation")
 	private static List<Material> nonBreakableMaterials = new ArrayList<Material>(Arrays.asList(
@@ -55,17 +116,19 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 
 	private Location oldLocation = null;
 
-	public PathfinderGoalBreakBlock(EntityInsentient entity, Arena arena, boolean isStrongBreaker)
+	public PathfinderGoalBreakBlock(EntityInsentient entity, PlayingState playingState, int breakSpeed, boolean isStrongBreaker)
 	{
-		this.arena = arena;
+		this.playingState = playingState;
 		this.entity = entity;
+		this.breakSpeed = breakSpeed;
 		this.isStrongBreaker = isStrongBreaker;
 	}
 	
-	public PathfinderGoalBreakBlock(EntityInsentient entity, Arena arena)
+	public PathfinderGoalBreakBlock(EntityInsentient entity, PlayingState playingState, int breakSpeed)
 	{
-		this.arena = arena;
+		this.playingState = playingState;
 		this.entity = entity;
+		this.breakSpeed = breakSpeed;
 		this.isStrongBreaker = false;
 	}
 	
@@ -73,11 +136,11 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	{
 		if (isStrongBreaker)
 		{
-			return (!nonBreakableMaterials.contains(material) && !naturalMaterials.contains(material));
+			return material.isSolid() && (!nonBreakableMaterials.contains(material) && !naturalMaterials.contains(material));
 		}
 		else
 		{
-			return (breakableMaterials.contains(material));
+			return material.isSolid() && (breakableMaterials.contains(material));
 		}
 		
 	}
@@ -152,29 +215,38 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 
 			if (block != null && block.getType() != Material.AIR)
 			{
+				int hardness = getBlockHardness(block.getType());
+				
 				if (r.nextInt(300) == 0)
 				{
 					this.entity.world.triggerEffect(1010, block.getX(), block.getY(), block.getZ(), 0);
 				}
-
-				this.i += 2;
-				int i = (int) ((float) this.i / 240.0F * 10.0F);
-
-				if (i != this.j)
+				
+				breakEnergy += breakSpeed;
+				
+				if (breakEnergy >= hardness)
 				{
-					this.entity.world.d(this.entity.getId(), block.getX(), block.getY(), block.getZ(), i);
-					this.j = i;
-				}
-
-				if (this.i >= 240)
-				{
-					this.i = 0;
-					Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(block));
-					block.setType(Material.AIR);
-					this.entity.world.triggerEffect(1012, block.getX(), block.getY(), block.getZ(), 0);
-					this.entity.world.triggerEffect(2001, block.getX(), block.getY(), block.getZ(),
-							net.minecraft.server.v1_7_R3.Block.b(this.entity.world.getType(block.getX(), block.getY(), block.getZ())));
-					block = null;
+					this.i += 2*(breakEnergy/hardness);
+					breakEnergy %= hardness;
+					
+					int i = (int) ((float) this.i / 240.0F * 10.0F);
+	
+					if (i != this.j)
+					{
+						this.entity.world.d(this.entity.getId(), block.getX(), block.getY(), block.getZ(), i);
+						this.j = i;
+					}
+	
+					if (this.i >= 240)
+					{
+						this.i = 0;
+						Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(block));
+						block.setType(Material.AIR);
+						this.entity.world.triggerEffect(1012, block.getX(), block.getY(), block.getZ(), 0);
+						this.entity.world.triggerEffect(2001, block.getX(), block.getY(), block.getZ(),
+								net.minecraft.server.v1_7_R3.Block.b(this.entity.world.getType(block.getX(), block.getY(), block.getZ())));
+						block = null;
+					}
 				}
 			}
 		}
@@ -264,7 +336,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 		for (Vector vector : possiblePositions)
 		{
 			Location finalLocation = new Location(a.getWorld(), a.getBlockX() + vector.getBlockX(), a.getBlockY() + vector.getBlockY(), a.getBlockZ() + vector.getBlockZ());
-			if (arena == null || (arena != null && !arena.isBorder(finalLocation.toVector())))
+			if (playingState == null || (playingState != null && !playingState.isBorder(finalLocation.toVector())))
 				blocks.add(finalLocation.getBlock());
 		}
 		return (Set<Block>) blocks;
@@ -276,5 +348,13 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 		int yd = b.getBlockY() - a.getBlockY();
 		int zd = b.getBlockZ() - a.getBlockZ();
 		return Math.sqrt(xd * xd + yd * yd + zd * zd);
+	}
+	
+	private int getBlockHardness(Material material)
+	{
+		if (hardnessList.containsKey(material))
+			return hardnessList.get(material);
+		else
+			return 20;
 	}
 }
