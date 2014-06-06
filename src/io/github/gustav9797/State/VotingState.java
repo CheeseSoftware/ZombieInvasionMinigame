@@ -208,7 +208,7 @@ public class VotingState extends ArenaState
 			});
 		}
 		else
-			event.getPlayer().kickPlayer("Don't try to join a started game.");
+			event.getPlayer().kickPlayer("Game is loading, rejoin when it's finished.");
 	}
 
 	@EventHandler
