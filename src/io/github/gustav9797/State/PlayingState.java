@@ -875,7 +875,7 @@ public class PlayingState extends ArenaState
 			        skull.setDurability((short)3);
 			        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 			        skullMeta.setOwner(player.getName());
-			        skullMeta.setDisplayName(player.getName());
+			        skullMeta.setDisplayName(player.getName() + "'s head");
 			        skull.setItemMeta(skullMeta);
 
 			        zombie = (CraftZombie)monster.getBukkitEntity();
