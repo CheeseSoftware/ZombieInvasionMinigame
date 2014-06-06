@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -861,11 +862,13 @@ public class PlayingState extends ArenaState
 		EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
 		((EntityBlockBreakingZombie)monster).setArena(this);
 
+		String pl = player.getName();
+		
         ItemStack skull = new ItemStack(Material.SKULL_ITEM);
         skull.setDurability((short)3);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwner(player.getName());
-        skullMeta.setDisplayName(player.getName());
+        skullMeta.setOwner(pl);
+        skullMeta.setDisplayName(pl);
         skull.setItemMeta(skullMeta);
 
         zombie = (CraftZombie)monster.getBukkitEntity();
