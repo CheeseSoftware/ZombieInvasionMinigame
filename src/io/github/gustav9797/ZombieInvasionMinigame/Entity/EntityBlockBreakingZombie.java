@@ -78,7 +78,7 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 		}
 		else*/
 		//{
-			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 5, true));
+			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 15, true));
 		//}
 		
 		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, state));
