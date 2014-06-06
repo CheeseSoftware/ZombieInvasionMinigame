@@ -872,6 +872,7 @@ public class PlayingState extends ArenaState
 					((EntityBlockBreakingZombie)monster).setPlayingState(this);
 					
 			        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
+			        skull.setDurability((short)3);
 			        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 			        skullMeta.setOwner(player.getName());
 			        skullMeta.setDisplayName(player.getName());
