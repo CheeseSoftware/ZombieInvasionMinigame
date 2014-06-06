@@ -247,17 +247,19 @@ public class PlayingState extends ArenaState
 		es.enableQueue();
 		int groundLevel = 4;
 		CuboidClipboard schematic = this.map.getSchematic();
-		com.sk89q.worldedit.Vector location = new com.sk89q.worldedit.Vector(1, groundLevel, 1);
-		try
+		if (schematic != null)
 		{
-			schematic.paste(es, location, true);
+			com.sk89q.worldedit.Vector location = new com.sk89q.worldedit.Vector(1, groundLevel, 1);
+			try
+			{
+				schematic.paste(es, location, true);
+			}
+			catch (MaxChangedBlocksException e)
+			{
+				e.printStackTrace();
+			}
+			es.flushQueue();
 		}
-		catch (MaxChangedBlocksException e)
-		{
-			e.printStackTrace();
-		}
-		es.flushQueue();
-
 	}
 
 	public void ClearMap()
@@ -1095,9 +1097,9 @@ public class PlayingState extends ArenaState
 	{
 		int armorLevel = currentWave / 2;
 
-		armorLevel = (armorLevel > armorTypes.length+2) ? armorTypes.length+2 : armorLevel;
+		armorLevel = (armorLevel > armorTypes.length + 2) ? armorTypes.length + 2 : armorLevel;
 
-		int armorType2 = random.nextInt(armorTypes.length+2) - random.nextInt(3);
+		int armorType2 = random.nextInt(armorTypes.length + 2) - random.nextInt(3);
 
 		if (armorType2 >= armorTypes.length && armorType2 < armorLevel)
 			armorType2 = 2 * armorType2 - armorType2;
