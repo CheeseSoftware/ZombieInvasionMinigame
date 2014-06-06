@@ -136,11 +136,11 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	{
 		if (isStrongBreaker)
 		{
-			return (!nonBreakableMaterials.contains(material) && !naturalMaterials.contains(material));
+			return material.isSolid() && (!nonBreakableMaterials.contains(material) && !naturalMaterials.contains(material));
 		}
 		else
 		{
-			return (breakableMaterials.contains(material));
+			return material.isSolid() && (breakableMaterials.contains(material));
 		}
 		
 	}

@@ -228,7 +228,7 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 		List<Block> lowPriorityBlocks = new ArrayList<Block>();
 		for (Block block : blocks)
 		{
-			if (!nonBreakableMaterials.contains(block.getType()) && (state == null || state.ContainsLocation(block.getLocation())))
+			if (block.getType().isSolid() && !nonBreakableMaterials.contains(block.getType()) && (state == null || state.ContainsLocation(block.getLocation())))
 			{
 				if (priorityMaterials.contains(block.getType()))
 					highPriorityBlocks.add(block);

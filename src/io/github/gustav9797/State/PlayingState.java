@@ -1134,12 +1134,13 @@ public class PlayingState extends ArenaState
 		}
 		else if (currentWave >= 5)
 		{
-			skeletonsToSpawn = amount / 40;
+			skeletonsToSpawn = amount / 15;
 			villagersToSpawn = amount / 20;
 			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else
 		{
+			skeletonsToSpawn = amount / 20;
 			zombiesToSpawn = amount;
 		}
 
