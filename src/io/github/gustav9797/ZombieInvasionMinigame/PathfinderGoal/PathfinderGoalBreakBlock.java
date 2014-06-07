@@ -61,7 +61,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 		hardnessList.put(Material.WEB, 80);
 		hardnessList.put(Material.DISPENSER, 2 * 70);
 		hardnessList.put(Material.DROPPER, 2 * 70);
-		hardnessList.put(Material.FURNACE, 2 * 0);
+		hardnessList.put(Material.FURNACE, 2 * 20);
 		hardnessList.put(Material.GOLD_BLOCK, 2 * 60);
 		hardnessList.put(Material.COAL_ORE, 2 * 60);
 		hardnessList.put(Material.DRAGON_EGG, 60);
@@ -217,8 +217,6 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 			if (block != null && block.getType() != Material.AIR)
 			{
 				int hardness = getBlockHardness(block.getType());
-				if (hardness == 0)
-					hardness = 1;
 
 				if (r.nextInt(300) == 0)
 				{
@@ -356,8 +354,13 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	private int getBlockHardness(Material material)
 	{
 		if (hardnessList.containsKey(material))
-			return hardnessList.get(material);
-		else
-			return 20;
+		{
+			int hardness = hardnessList.get(material);
+			if(hardness != 0)
+				return hardness;
+			else
+				Bukkit.getLogger().warning("Block with zero hardness is not allowed. Fix this!");
+		}
+		return 20;
 	}
 }
