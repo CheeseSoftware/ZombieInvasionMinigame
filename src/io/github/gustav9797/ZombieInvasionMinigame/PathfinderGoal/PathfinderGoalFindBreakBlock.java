@@ -41,7 +41,16 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 			Material.AIR, Material.QUARTZ_BLOCK, Material.STONE));
 	private static List<Material> naturalMaterials = new ArrayList<Material>(Arrays.asList(Material.GRASS, Material.DIRT, Material.LEAVES));
 	private static List<Material> priorityMaterials = new ArrayList<Material>(Arrays.asList(Material.WOOD_DOOR, Material.IRON_DOOR, Material.TRAP_DOOR, Material.CHEST, Material.THIN_GLASS,
-			Material.STAINED_GLASS, Material.STAINED_GLASS_PANE, Material.GLASS, Material.THIN_GLASS/*, Material.TORCH, Material.WOOL*/));
+			Material.STAINED_GLASS, Material.STAINED_GLASS_PANE, Material.GLASS, Material.THIN_GLASS/*
+																									 * ,
+																									 * Material
+																									 * .
+																									 * TORCH
+																									 * ,
+																									 * Material
+																									 * .
+																									 * WOOL
+																									 */));
 
 	public PathfinderGoalFindBreakBlock(EntityInsentient entity, PlayingState state, int blockDamageIncrease)
 	{
@@ -67,16 +76,13 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 	public void c() // setup
 	{
 		super.c();
-		if (CanFindABlock())
+		currentBlock = getRandomCloseBlock();
+		if (currentBlock != null)
 		{
-			while (currentBlock == null)
-			{
-				currentBlock = getRandomCloseBlock();
-				currentBlockDamage = 0;
-				ticksStoodStill = 0;
-				isBreaking = true;
-				this.couldNotWalkToBlock = false;
-			}
+			currentBlockDamage = 0;
+			ticksStoodStill = 0;
+			isBreaking = true;
+			this.couldNotWalkToBlock = false;
 			Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
 
 			boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
@@ -134,25 +140,25 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 		}
 		if (!isWalking)
 		{
-			if (currentBlock == null && !isBreaking && CanFindABlock())
+			if (currentBlock == null && !isBreaking)
 			{
-				while (currentBlock == null)
+				currentBlock = getRandomCloseBlock();
+				if (currentBlock != null)
 				{
-					currentBlock = getRandomCloseBlock();
 					currentBlockDamage = 0;
 					ticksStoodStill = 0;
 					isBreaking = true;
 					blockBroken = false;
-				}
-				if (currentBlock != null)
-				{
-					Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
-
-					boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
-					if (foundPath)
+					if (currentBlock != null)
 					{
-						this.isWalking = true;
-						return;
+						Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
+
+						boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
+						if (foundPath)
+						{
+							this.isWalking = true;
+							return;
+						}
 					}
 				}
 			}
