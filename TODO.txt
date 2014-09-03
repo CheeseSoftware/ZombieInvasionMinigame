@@ -1,13 +1,17 @@
-Add 60 second lobby
-Disable joining once game has started
-Allow 10 seconds after game has stopped to restart
-Spectators should not take damage
-Change prefix to &9ZombieInvasion &8|| &a
+Spectators should not be able to use inventory
+Remove the ammo that the player gets when he joins the game.
+When game is started and you join the arena, give a small amount of ammo for every weapon the player has.
 
+* make stairs indestructible, except the upside down ones.
+* Monsters should only remove blocks first in head hight, and then foot height.
+
+* Make zombie skin for bunnies
+
+
+***************************************
+* Old TODO:                           *
+***************************************
 When in lobby, set Motd to "Voting"
 When ingame, set motd to "In-Game"
 ORR
 The map name, like "House"
-
-* make stairs indestructible, except the upside down ones.
-* Monsters should only remove blocks first in head hight, and then foot height.
