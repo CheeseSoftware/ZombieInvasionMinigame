@@ -1124,12 +1124,12 @@ public class PlayingState extends ArenaState
 	{
 		int armorLevel = currentWave / 2;
 
-		armorLevel = (armorLevel > armorTypes.length + 2) ? armorTypes.length + 2 : armorLevel;
+		armorLevel = (armorLevel >= armorTypes.length - 1) ? armorTypes.length - 1 : armorLevel;
 
 		int armorType2 = random.nextInt(armorTypes.length + 2) - random.nextInt(3);
 
-		if (armorType2 >= armorTypes.length && armorType2 < armorLevel)
-			armorType2 = 2 * armorType2 - armorType2;
+		if (armorType2 >= armorTypes.length - 1 && armorType2 < armorLevel)
+			armorType2 = 2 * armorType2 - armorLevel;
 
 		if (armorType2 < 0)
 			return Material.AIR;
