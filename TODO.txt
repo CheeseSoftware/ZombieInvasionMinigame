@@ -8,3 +8,6 @@ When in lobby, set Motd to "Voting"
 When ingame, set motd to "In-Game"
 ORR
 The map name, like "House"
+
+* make stairs indestructible, except the upside down ones.
+* Monsters should only remove blocks first in head hight, and then foot height.
