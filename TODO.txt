@@ -7,6 +7,10 @@ When game is started and you join the arena, give a small amount of ammo for eve
 
 * Make zombie skin for bunnies
 
+* Fix spectator mode:
+	- "Spectator mode" should use mc-spectator mode.
+	- spectators should keep all items they have bought with /xpbuy
+
 
 ***************************************
 * Old TODO:                           *
