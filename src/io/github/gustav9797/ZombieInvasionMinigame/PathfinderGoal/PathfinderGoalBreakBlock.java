@@ -105,7 +105,8 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	//
 	@SuppressWarnings("deprecation")
 	private static List<Material> nonBreakableMaterials = new ArrayList<Material>(Arrays.asList(Material.BEDROCK, Material.getMaterial(8), Material.getMaterial(9), Material.GRASS, Material.SAND,
-			Material.AIR, Material.QUARTZ_BLOCK, Material.STONE, Material.WOOD_STAIRS));
+			Material.AIR, Material.QUARTZ_BLOCK, Material.STONE, Material.WOOD_STAIRS, Material.BIRCH_WOOD_STAIRS, Material.BRICK_STAIRS, Material.COBBLESTONE_STAIRS, Material.JUNGLE_WOOD_STAIRS, Material.NETHER_BRICK_STAIRS, Material.QUARTZ_STAIRS, Material.SANDSTONE_STAIRS, Material.SMOOTH_STAIRS, Material.SPRUCE_WOOD_STAIRS));
+	
 	private static List<Material> naturalMaterials = new ArrayList<Material>(Arrays.asList(Material.GRASS, Material.DIRT, Material.LEAVES));
 
 	private static List<Material> breakableMaterials = new ArrayList<Material>(Arrays.asList(Material.WOOD_DOOR, Material.IRON_DOOR, Material.TRAP_DOOR, Material.THIN_GLASS, Material.STAINED_GLASS,
