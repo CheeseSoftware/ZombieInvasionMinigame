@@ -1174,7 +1174,7 @@ public class PlayingState extends ArenaState
 			amount *= 0.25;
 			
 			// Spawn the boss(es).
-			switch(currentWave/10)
+			/*switch(currentWave/10)
 			{
 			// Wither
 			case 1:
@@ -1184,7 +1184,9 @@ public class PlayingState extends ArenaState
 			default:
 				withersToSpawn = currentWave/10;
 				break;
-			}
+			}*/
+			
+			withersToSpawn = 10;
 			
 			for (int i = 0; i < 3; i++)
 				this.Broadcast("BOSS WAVE!!! Be prepared!");
