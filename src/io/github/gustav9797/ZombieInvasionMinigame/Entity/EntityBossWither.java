@@ -106,4 +106,9 @@ public class EntityBossWither extends EntityWither implements ICustomMonster
 		}
 		return null;
 	}
+	
+	protected void bn()
+	{
+		
+	}
 }

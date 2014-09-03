@@ -1023,7 +1023,7 @@ public class PlayingState extends ArenaState
 			if (this.villagersToSpawn > 0)
 				possibleEntityTypes.add("VILLAGER");
 			if (this.withersToSpawn > 0)
-				possibleEntityTypes.add("WITHER");
+				possibleEntityTypes.add("WITHERBOSS");
 			if (possibleEntityTypes.size() > 0)
 			{
 				EntityType entityType = EntityType.fromName(possibleEntityTypes.get(r.nextInt(possibleEntityTypes.size())));
@@ -1169,27 +1169,14 @@ public class PlayingState extends ArenaState
 		withersToSpawn = 0;
 
 		// Boss wave:
-		if (currentWave%2 == 0 && currentWave > 0)
+		if (currentWave%10 == 0 && currentWave > 0)
 		{
-			amount *= 0.25;
+			//amount *= 0.25;
 			
 			// Spawn the boss(es).
-			/*switch(currentWave/10)
-			{
-			// Wither
-			case 1:
-				withersToSpawn = 1;
-				break;
-				
-			default:
-				withersToSpawn = currentWave/10;
-				break;
-			}*/
+			withersToSpawn = currentWave/10;
 			
-			withersToSpawn = 10;
-			
-			for (int i = 0; i < 3; i++)
-				this.Broadcast("BOSS WAVE!!! Be prepared!");
+			this.Broadcast("BOSS WAVE!! Be prepared!");
 		}
 		
 		if (currentWave > 10)

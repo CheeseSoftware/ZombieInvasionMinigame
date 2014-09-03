@@ -453,6 +453,14 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 									sender.sendMessage("Spawn point does not exist.");
 							}
 						}
+						else if (args[0].equals("wither"))
+						{
+							net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) player.getWorld()).getHandle();
+							EntityCreature monster = new EntityBossWither(mcWorld);
+							monster.getBukkitEntity().teleport(player.getLocation());
+							mcWorld.addEntity(monster, SpawnReason.CUSTOM);
+							sender.sendMessage("Wither spawned!");
+						}
 						else
 							sender.sendMessage("Command doesn't exist.");
 					}
