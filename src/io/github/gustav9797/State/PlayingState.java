@@ -73,6 +73,7 @@ import io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingSkeleton;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingVillager;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingZombie;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBossWither;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.ICustomMonster;
 
 public class PlayingState extends ArenaState
@@ -106,6 +107,7 @@ public class PlayingState extends ArenaState
 	private int zombiesToSpawn = 0;
 	private int skeletonsToSpawn = 0;
 	private int villagersToSpawn = 0;
+	private int withersToSpawn = 0;
 
 	public PlayingState(Arena arena, List<Player> toTransfer, ZombieArenaMap map)
 	{
@@ -1020,6 +1022,8 @@ public class PlayingState extends ArenaState
 				possibleEntityTypes.add("SKELETON");
 			if (this.villagersToSpawn > 0)
 				possibleEntityTypes.add("VILLAGER");
+			if (this.withersToSpawn > 0)
+				possibleEntityTypes.add("WITHER");
 			if (possibleEntityTypes.size() > 0)
 			{
 				EntityType entityType = EntityType.fromName(possibleEntityTypes.get(r.nextInt(possibleEntityTypes.size())));
@@ -1028,6 +1032,13 @@ public class PlayingState extends ArenaState
 				{
 					switch (entityType)
 					{
+						case WITHER:
+							if (withersToSpawn > 0)
+							{
+								monster = new EntityBossWither(mcWorld);
+								withersToSpawn--;
+							}
+						break;
 						case SKELETON:
 							if (skeletonsToSpawn > 0)
 							{
@@ -1154,7 +1165,31 @@ public class PlayingState extends ArenaState
 		zombiesToSpawn = 0;
 		skeletonsToSpawn = 0;
 		villagersToSpawn = 0;
+		
+		withersToSpawn = 0;
 
+		// Boss wave:
+		if (currentWave%2 == 0 && currentWave > 0)
+		{
+			amount *= 0.25;
+			
+			// Spawn the boss(es).
+			switch(currentWave/10)
+			{
+			// Wither
+			case 1:
+				withersToSpawn = 1;
+				break;
+				
+			default:
+				withersToSpawn = currentWave/10;
+				break;
+			}
+			
+			for (int i = 0; i < 3; i++)
+				this.Broadcast("BOSS WAVE!!! Be prepared!");
+		}
+		
 		if (currentWave > 10)
 		{
 			skeletonsToSpawn = amount / 5;

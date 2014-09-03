@@ -8,6 +8,7 @@ import io.github.gustav9797.Zombie.ZombieArenaMap;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingSkeleton;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingVillager;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBlockBreakingZombie;
+import io.github.gustav9797.ZombieInvasionMinigame.Entity.EntityBossWither;
 import io.github.gustav9797.ZombieInvasionMinigame.Entity.ICustomMonster;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import net.minecraft.server.v1_7_R3.BiomeBase;
 import net.minecraft.server.v1_7_R3.BiomeMeta;
 import net.minecraft.server.v1_7_R3.EntityCreature;
 import net.minecraft.server.v1_7_R3.EntityVillager;
+import net.minecraft.server.v1_7_R3.EntityWither;
 import net.minecraft.server.v1_7_R3.EntityZombie;
 import net.minecraft.server.v1_7_R3.EntitySkeleton;
 import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
@@ -89,6 +91,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		this.entityTypes.add(new CustomEntityType("Zombie", 54, EntityType.ZOMBIE, EntityZombie.class, EntityBlockBreakingZombie.class));
 		this.entityTypes.add(new CustomEntityType("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class, EntityBlockBreakingSkeleton.class));
 		this.entityTypes.add(new CustomEntityType("Villager ", 120, EntityType.VILLAGER, EntityVillager.class, EntityBlockBreakingVillager.class));
+		this.entityTypes.add(new CustomEntityType("Wither", 120, EntityType.WITHER, EntityWither.class, EntityBossWither.class));
 		this.registerEntities();
 
 		ZombieInvasionMinigame.economyPlugin = (IOstEconomy) Bukkit.getPluginManager().getPlugin("OstEconomyPlugin");
