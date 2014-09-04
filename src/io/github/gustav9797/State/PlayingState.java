@@ -12,11 +12,13 @@ import java.util.UUID;
 
 import net.minecraft.server.v1_7_R3.EntityCreature;
 import net.minecraft.server.v1_7_R3.EntityPlayer;
+import net.minecraft.server.v1_7_R3.MobEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
@@ -26,6 +28,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -1081,6 +1084,69 @@ public class PlayingState extends ArenaState
 
 					if (monster != null)
 					{
+						bool hasPotion = false;
+						
+						// Give potions to monster
+						if (currentWave > 10)
+						{
+							if (random.nextInt(4) == 0)
+							{
+								hasPotion = true;
+							}
+							
+						}
+						else if (currentWave > 5)
+						{
+							if (random.nextInt(12) == 0)
+							{
+								hasPotion = true;
+							}
+						}
+						
+						if (hasPotion)
+						{
+							PotionEffectType potionEffectType = PotionEffectType.FIRE_RESISTANCE;
+							
+							switch(random.nextInt(10))
+							{
+							
+							default:
+							case 0:
+								potionEffectType = PotionEffectType.ABSORPTION;
+								break;
+							case 1:
+								potionEffectType = PotionEffectType.DAMAGE_RESISTANCE;
+								break;
+							case 2:
+								potionEffectType = PotionEffectType.FAST_DIGGING;
+								break;
+							case 3:
+								potionEffectType = PotionEffectType.HEALTH_BOOST;
+								break;
+							case 4:
+								potionEffectType = PotionEffectType.INCREASE_DAMAGE;
+								break;
+							case 5:
+								potionEffectType = PotionEffectType.INVISIBILITY;
+								break;
+							case 6:
+								potionEffectType = PotionEffectType.JUMP;
+								break;
+							case 7:
+								potionEffectType = PotionEffectType.REGENERATION;
+								break;
+							case 8:
+								potionEffectType = PotionEffectType.SPEED;
+								break;
+							case 9:
+								potionEffectType = PotionEffectType.WATER_BREATHING;
+								break;
+							}
+							
+							((LivingEntity)monster.getBukkitEntity()).addPotionEffect(new PotionEffect(potionEffectType, Integer.MAX_VALUE, 1));
+						}
+						
+						
 						((ICustomMonster) monster).setPlayingState(this);
 						double xd = r.nextDouble() / 10;
 						double zd = r.nextDouble() / 10;
@@ -1188,6 +1254,13 @@ public class PlayingState extends ArenaState
 			
 			for (int i = 0; i < 3; i++)
 				this.Broadcast("BOSS WAVE!!! Be prepared!");
+			
+			for (Player player : this.players)
+			{
+				// TODO: replace "cat_purr" with a scary sound.
+				player.playSound(player.getLocation(), Sound.CAT_PURR, 0.5f, 3.0f);
+				player.playSound(player.getLocation(), Sound.GHAST_SCREAM, 0.5f, 1.5f);
+			} 
 		}
 		
 		if (currentWave > 10)
