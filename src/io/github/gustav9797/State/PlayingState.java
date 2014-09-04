@@ -1248,27 +1248,27 @@ public class PlayingState extends ArenaState
 			for (Player player : this.players)
 			{
 				// TODO: replace "cat_purr" with a scary sound.
-				player.playSound(player.getLocation(), Sound.CAT_PURR, 0.5f, 3.0f);
-				player.playSound(player.getLocation(), Sound.GHAST_SCREAM, 0.5f, 1.5f);
+				player.playSound(player.getLocation(), Sound.CAT_PURR, 1.5f, 0.5f);
+				player.playSound(player.getLocation(), Sound.GHAST_SCREAM, 1.5f, 0.25f);
 			} 
 
 		}
 		
 		if (currentWave > 10)
 		{
-			skeletonsToSpawn = amount / 5;
+			//skeletonsToSpawn = amount / 5;
 			villagersToSpawn = amount / 2;
 			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else if (currentWave >= 5)
 		{
-			skeletonsToSpawn = amount / 15;
+			//skeletonsToSpawn = amount / 15;
 			villagersToSpawn = amount / 20;
 			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else
 		{
-			skeletonsToSpawn = amount / 20;
+			//skeletonsToSpawn = amount / 20;
 			zombiesToSpawn = amount;
 		}
 
