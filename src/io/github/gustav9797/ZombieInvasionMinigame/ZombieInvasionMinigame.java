@@ -99,6 +99,10 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		{
 			this.getServer().getLogger().severe("Could not load economy!");
 		}
+		else
+		{
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Disc Key", Material.RECORD_11, 1000, 0, false, 1);
+		}
 
 		this.lobbyWorld = this.getServer().getWorld("lobby");
 		if (this.lobbyWorld == null)
