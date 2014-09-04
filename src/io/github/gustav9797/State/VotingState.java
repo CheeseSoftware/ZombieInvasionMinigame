@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,6 +34,7 @@ public class VotingState extends ArenaState
 	private int startingTaskId = -1;
 	private int currentStartingTicks = 0;
 	private boolean voting = true;
+	private Random r = new Random();
 	private Map<Integer, Map.Entry<ArenaMap, Integer>> maps = new HashMap<Integer, Map.Entry<ArenaMap, Integer>>();
 
 	public VotingState(final Arena arena)
@@ -100,6 +102,7 @@ public class VotingState extends ArenaState
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private ArenaMap DetermineMapWon()
 	{
 		int mostVotes = Integer.MIN_VALUE;
@@ -112,6 +115,8 @@ public class VotingState extends ArenaState
 				mostVotesMap = map.getValue().getKey();
 			}
 		}
+		if(mostVotes <= 0)
+			mostVotesMap = ((Map.Entry<ArenaMap, Integer>)(this.maps.values().toArray()[r.nextInt(this.maps.size())])).getKey();
 		return mostVotesMap;
 	}
 

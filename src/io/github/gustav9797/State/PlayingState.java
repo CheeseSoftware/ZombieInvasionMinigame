@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import net.minecraft.server.v1_7_R3.EntityCreature;
 import net.minecraft.server.v1_7_R3.EntityPlayer;
-import net.minecraft.server.v1_7_R3.MobEffect;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
