@@ -204,7 +204,6 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 					arena.Save();
 					map.Save();
 					this.Save();
-					arena.setState(new PlayingState(arena, Arrays.asList(Bukkit.getOnlinePlayers()), map));
 					sender.sendMessage("Arena " + name + " created!");
 				}
 				else
