@@ -13,7 +13,6 @@ import net.minecraft.server.v1_7_R3.AttributeInstance;
 import net.minecraft.server.v1_7_R3.Entity;
 import net.minecraft.server.v1_7_R3.EntityHuman;
 import net.minecraft.server.v1_7_R3.EntityWither;
-import net.minecraft.server.v1_7_R3.EntityZombie;
 import net.minecraft.server.v1_7_R3.Navigation;
 import net.minecraft.server.v1_7_R3.PathfinderGoalFloat;
 import net.minecraft.server.v1_7_R3.PathfinderGoalHurtByTarget;
@@ -24,7 +23,7 @@ import net.minecraft.server.v1_7_R3.World;
 
 import org.bukkit.craftbukkit.v1_7_R3.util.UnsafeList;
 
-public class EntityBossWither extends EntityWither implements ICustomBoss
+public class EntityBossWither extends EntityWither implements ICustomMonster
 {
 	private Random r = new Random();
 
@@ -106,5 +105,10 @@ public class EntityBossWither extends EntityWither implements ICustomBoss
 			}
 		}
 		return null;
+	}
+	
+	protected void bn()
+	{
+		
 	}
 }
