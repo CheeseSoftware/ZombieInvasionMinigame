@@ -183,7 +183,7 @@ public abstract class PathfinderGoalCustomTarget extends PathfinderGoal
 		}
 	}
 
-	private boolean canWalkToTarget(EntityLiving target) // canExecute
+	private boolean canWalkToTarget(EntityLiving target)
 	{
 		this.e = 10 + r.nextInt(5);
 		PathEntity pathentity = this.entity.getNavigation().a(target);

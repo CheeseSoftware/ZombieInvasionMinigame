@@ -43,7 +43,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 	boolean f;
 
 	protected Block block;
-	protected static List<Vector> possiblePositions = new ArrayList<Vector>(Arrays.asList(new Vector(-1, 0, 0), new Vector(-1, 1, 0), new Vector(1, 0, 0), new Vector(1, 1, 0), new Vector(0, 0, -1),
+	protected static List<Vector> closePositions = new ArrayList<Vector>(Arrays.asList(new Vector(-1, 0, 0), new Vector(-1, 1, 0), new Vector(1, 0, 0), new Vector(1, 1, 0), new Vector(0, 0, -1),
 			new Vector(0, 1, -1), new Vector(0, 0, 1), new Vector(0, 1, 1), new Vector(0, 2, 0)));
 
 	protected static final Map<Material, Integer> hardnessList = new HashMap<Material, Integer>();
@@ -335,7 +335,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 		Set<Block> blocks = new HashSet<Block>();
 		Location e = this.entity.getBukkitEntity().getLocation();
 		Location a = new Location(e.getWorld(), e.getBlockX(), e.getBlockY(), e.getBlockZ());
-		for (Vector vector : possiblePositions)
+		for (Vector vector : closePositions)
 		{
 			Location finalLocation = new Location(a.getWorld(), a.getBlockX() + vector.getBlockX(), a.getBlockY() + vector.getBlockY(), a.getBlockZ() + vector.getBlockZ());
 			if (playingState == null || (playingState != null && !playingState.isBorder(finalLocation.toVector())))
