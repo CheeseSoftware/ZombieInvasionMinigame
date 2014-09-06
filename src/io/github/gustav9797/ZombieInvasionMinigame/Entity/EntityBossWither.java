@@ -72,7 +72,7 @@ public class EntityBossWither extends EntityWither implements ICustomMonster
 		/*if (random.nextInt(8) == 0)
 		{
 			//ItemStack[] equipment = this.getEquipment();
-			//vågar inte göra något mer:/ skeletonhuvuden!
+			//vgar inte gra ngot mer:/ skeletonhuvuden!
 			
 			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 20, true));
 		}

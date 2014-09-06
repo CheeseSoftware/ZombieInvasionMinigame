@@ -22,7 +22,7 @@ public class Arena
 	
 	public String getPrefix()
 	{
-		return ChatColor.WHITE + "[" + ChatColor.BLUE + "ZombieInvasion" + ChatColor.WHITE + "] ";
+		return ChatColor.DARK_AQUA + "[ZombieInvasion] "+ChatColor.YELLOW;
 	}
 
 	public Vector getLocation()
