@@ -105,7 +105,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stone Sword", Material.STONE_SWORD, 250, 0, false, 1);
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Gold Sword", Material.GOLD_SWORD, 500, 0, false, 1);
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Iron Sword", Material.IRON_SWORD, 1000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Sword", Material.WOOD_SWORD, 1500, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Sword", Material.DIAMOND_SWORD, 1500, 0, false, 1);
 			
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Bow", Material.BOW, 250, 0, false, 1);
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stack of Arrows", Material.ARROW, 100, 0, false, 64);
