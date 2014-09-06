@@ -101,7 +101,21 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		}
 		else
 		{
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Wood Sword", Material.WOOD_SWORD, 100, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stone Sword", Material.STONE_SWORD, 250, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Gold Sword", Material.GOLD_SWORD, 500, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Iron Sword", Material.IRON_SWORD, 1000, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Sword", Material.WOOD_SWORD, 1500, 0, false, 1);
+			
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Bow", Material.BOW, 250, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stack of Arrows", Material.ARROW, 100, 0, false, 64);
+			
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Bone Key", Material.BONE, 500, 0, false, 1);
 			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Disc Key", Material.RECORD_11, 1000, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Iron Key", Material.IRON_INGOT, 2000, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Gold Key", Material.GOLD_INGOT, 3000, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Emerald Key", Material.EMERALD, 4000, 0, false, 1);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Key", Material.DIAMOND, 5000, 0, false, 1);
 		}
 
 		this.lobbyWorld = this.getServer().getWorld("lobby");
