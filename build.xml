@@ -61,6 +61,7 @@
 			<classpath refid="run.New_configuration (6).classpath" />
 		</java>
 	</target>
+	
 	<target name="jar">
 		<mkdir dir="jar" />
 		<jar destfile="jar/ZombieInvasionMinigame-BUILD_NUMBER.jar" basedir="bin">
