@@ -65,8 +65,7 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 	private boolean hasPathToWalk()
 	{
 		boolean bla = !this.entityCreature.getNavigation().g();
-		return bla; // hasEnded() eller
-					// något
+		return bla;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -113,7 +112,7 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 
 	public void d() // finish
 	{
-		this.entityCreature.getNavigation().h(); // .end(), .stop() eller något
+		this.entityCreature.getNavigation().h(); // .end(), .stop()
 	}
 
 	public void e() // move

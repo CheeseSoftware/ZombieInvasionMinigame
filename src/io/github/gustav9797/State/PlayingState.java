@@ -1179,9 +1179,9 @@ public class PlayingState extends ArenaState
 
 	private int getZombieSpawnAmount(int wave)
 	{
-		// y = ax² + bx + c
-		// y = (25x² + 205x + 330)/28
-		// y = 25x²/28 + 205x/28 + 165x/14
+		// y = ax^2 + bx + c
+		// y = (25x^2 + 205x + 330)/28
+		// y = 25x^2/28 + 205x/28 + 165x/14
 		// Wave 1: 20
 		// Wave >= 9: 150
 
