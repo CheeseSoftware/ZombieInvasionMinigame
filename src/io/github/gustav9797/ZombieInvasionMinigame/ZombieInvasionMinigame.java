@@ -144,20 +144,23 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 	public void onDisable()
 	{
 		this.SaveConfig();
-		/*if (arena.getState() instanceof PlayingState)
+		if (arena != null && arena.getState() instanceof PlayingState)
 		{
 			PlayingState state = (PlayingState) arena.getState();
-			state.Reset();
-			state.LoadMap();
-			for (Player player : state.getPlayers())
+			if (!state.isRestarting())
 			{
-				if (player.isOnline())
+				state.Reset();
+				state.LoadMap();
+				for (Player player : state.getPlayers())
 				{
-					player.removeMetadata("arena", this);
-					ConnectPlayer(player, "S150");
+					if (player.isOnline())
+					{
+						player.removeMetadata("arena", this);
+						ConnectPlayer(player, "S150");
+					}
 				}
 			}
-		}*/
+		}
 	}
 
 	public static int tryParse(String text)
@@ -199,15 +202,16 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 					sender.sendMessage("Usage: /vote <id>");
 				return true;
 			}
-			/*else if (cmd.getName().equals("zombie"))
-			{
-				net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.arena.middle.getWorld()).getHandle();
-				EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-				((EntityBlockBreakingZombie) monster).setPlayingState((PlayingState) arena.getState());
-				monster.getBukkitEntity().teleport(player.getLocation());
-				mcWorld.addEntity(monster, SpawnReason.CUSTOM);
-				return true;
-			}*/
+			/*
+			 * else if (cmd.getName().equals("zombie")) {
+			 * net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld)
+			 * this.arena.middle.getWorld()).getHandle(); EntityCreature monster
+			 * = new EntityBlockBreakingZombie(mcWorld);
+			 * ((EntityBlockBreakingZombie)
+			 * monster).setPlayingState((PlayingState) arena.getState());
+			 * monster.getBukkitEntity().teleport(player.getLocation());
+			 * mcWorld.addEntity(monster, SpawnReason.CUSTOM); return true; }
+			 */
 			else if (cmd.getName().equals("createarena"))
 			{
 				if (args.length > 0)

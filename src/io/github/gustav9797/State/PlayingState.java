@@ -166,6 +166,11 @@ public class PlayingState extends ArenaState
 			}
 		}, 0L, 10L);
 	}
+	
+	public boolean isRestarting()
+	{
+		return this.restarting;
+	}
 
 	@Override
 	public String getMotd()
@@ -645,15 +650,14 @@ public class PlayingState extends ArenaState
 						if (x == 0 || z == 0 || x == this.map.size || z == this.map.size)
 						{
 							originalBlock = world.getBlockAt(x, y, z).getState();
-							// if
-							// (replacableMaterials.contains(originalBlock.getType()))
-							// {
-							BorderBlock block = new BorderBlock(originalBlock.getLocation().toVector(), material, originalBlock.getType());
-							while (this.border.contains(block))
-								this.border.remove(block);
-							this.border.add(block);
-							world.getBlockAt(x, y, z).setType(material);
-							// }
+							if (originalBlock.getType() == Material.AIR)
+							{
+								BorderBlock block = new BorderBlock(originalBlock.getLocation().toVector(), material, originalBlock.getType());
+								while (this.border.contains(block))
+									this.border.remove(block);
+								this.border.add(block);
+								world.getBlockAt(x, y, z).setType(material);
+							}
 						}
 					}
 				}
@@ -873,26 +877,26 @@ public class PlayingState extends ArenaState
 
 					net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.world).getHandle();
 					EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-					((EntityBlockBreakingZombie)monster).setPlayingState(this);
-					
-			        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
-			        skull.setDurability((short)3);
-			        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-			        skullMeta.setOwner(player.getName());
-			        skullMeta.setDisplayName(player.getName() + "'s head");
-			        skull.setItemMeta(skullMeta);
+					((EntityBlockBreakingZombie) monster).setPlayingState(this);
 
-			        zombie = (CraftZombie)monster.getBukkitEntity();
-			        
-			        zombie.getEquipment().setHelmet(skull);
-			        zombie.setCustomName(player.getName());
-			        zombie.setCustomNameVisible(true);
-			        zombie.setCanPickupItems(true);
+					ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
+					skull.setDurability((short) 3);
+					SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+					skullMeta.setOwner(player.getName());
+					skullMeta.setDisplayName(player.getName() + "'s head");
+					skull.setItemMeta(skullMeta);
 
-			        this.monsters.put(zombie.getUniqueId(), monster);
+					zombie = (CraftZombie) monster.getBukkitEntity();
+
+					zombie.getEquipment().setHelmet(skull);
+					zombie.setCustomName(player.getName());
+					zombie.setCustomNameVisible(true);
+					zombie.setCanPickupItems(true);
+
+					this.monsters.put(zombie.getUniqueId(), monster);
 					monster.getBukkitEntity().teleport(player.getLocation());
 					mcWorld.addEntity(monster, SpawnReason.CUSTOM);
-					
+
 					this.MakeSpectator(player);
 				}
 			}
@@ -935,12 +939,13 @@ public class PlayingState extends ArenaState
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
 	{
-		if (this.players.contains(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (player.getGameMode() != GameMode.CREATIVE && this.players.contains(player))
 		{
 			if (this.isBorder(event.getBlock().getLocation().toVector()))
 			{
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(arena.getPrefix() + "Don't try to escape. You are ment to die with the monsters.");
+				player.sendMessage(arena.getPrefix() + "Don't try to escape. You are meant to die with the monsters.");
 			}
 		}
 	}
@@ -949,7 +954,7 @@ public class PlayingState extends ArenaState
 	public void onBlockPlace(BlockPlaceEvent event)
 	{
 		Player player = event.getPlayer();
-		if (this.players.contains(player))
+		if (player.getGameMode() != GameMode.CREATIVE && this.players.contains(player))
 		{
 			if (isOnBorder(event.getBlockPlaced().getLocation().toVector()))
 			{
@@ -1040,7 +1045,7 @@ public class PlayingState extends ArenaState
 								monster = new EntityBossWither(mcWorld);
 								withersToSpawn--;
 							}
-						break;
+							break;
 						case SKELETON:
 							if (skeletonsToSpawn > 0)
 							{
@@ -1084,7 +1089,7 @@ public class PlayingState extends ArenaState
 					if (monster != null)
 					{
 						boolean hasPotion = false;
-						
+
 						// Give potions to monster
 						if (currentWave > 10)
 						{
@@ -1092,7 +1097,7 @@ public class PlayingState extends ArenaState
 							{
 								hasPotion = true;
 							}
-							
+
 						}
 						else if (currentWave > 5)
 						{
@@ -1101,51 +1106,50 @@ public class PlayingState extends ArenaState
 								hasPotion = true;
 							}
 						}
-						
+
 						if (hasPotion)
 						{
 							PotionEffectType potionEffectType = PotionEffectType.FIRE_RESISTANCE;
-							
-							switch(random.nextInt(10))
+
+							switch (random.nextInt(10))
 							{
-							
-							default:
-							case 0:
-								potionEffectType = PotionEffectType.ABSORPTION;
-								break;
-							case 1:
-								potionEffectType = PotionEffectType.DAMAGE_RESISTANCE;
-								break;
-							case 2:
-								potionEffectType = PotionEffectType.FAST_DIGGING;
-								break;
-							case 3:
-								potionEffectType = PotionEffectType.HEALTH_BOOST;
-								break;
-							case 4:
-								potionEffectType = PotionEffectType.INCREASE_DAMAGE;
-								break;
-							case 5:
-								potionEffectType = PotionEffectType.INVISIBILITY;
-								break;
-							case 6:
-								potionEffectType = PotionEffectType.JUMP;
-								break;
-							case 7:
-								potionEffectType = PotionEffectType.REGENERATION;
-								break;
-							case 8:
-								potionEffectType = PotionEffectType.SPEED;
-								break;
-							case 9:
-								potionEffectType = PotionEffectType.WATER_BREATHING;
-								break;
+
+								default:
+								case 0:
+									potionEffectType = PotionEffectType.ABSORPTION;
+									break;
+								case 1:
+									potionEffectType = PotionEffectType.DAMAGE_RESISTANCE;
+									break;
+								case 2:
+									potionEffectType = PotionEffectType.FAST_DIGGING;
+									break;
+								case 3:
+									potionEffectType = PotionEffectType.HEALTH_BOOST;
+									break;
+								case 4:
+									potionEffectType = PotionEffectType.INCREASE_DAMAGE;
+									break;
+								case 5:
+									potionEffectType = PotionEffectType.INVISIBILITY;
+									break;
+								case 6:
+									potionEffectType = PotionEffectType.JUMP;
+									break;
+								case 7:
+									potionEffectType = PotionEffectType.REGENERATION;
+									break;
+								case 8:
+									potionEffectType = PotionEffectType.SPEED;
+									break;
+								case 9:
+									potionEffectType = PotionEffectType.WATER_BREATHING;
+									break;
 							}
-							
-							((LivingEntity)monster.getBukkitEntity()).addPotionEffect(new PotionEffect(potionEffectType, Integer.MAX_VALUE, 1));
+
+							((LivingEntity) monster.getBukkitEntity()).addPotionEffect(new PotionEffect(potionEffectType, Integer.MAX_VALUE, 1));
 						}
-						
-						
+
 						((ICustomMonster) monster).setPlayingState(this);
 						double xd = r.nextDouble() / 10;
 						double zd = r.nextDouble() / 10;
@@ -1175,9 +1179,9 @@ public class PlayingState extends ArenaState
 
 	private int getZombieSpawnAmount(int wave)
 	{
-		// y = ax² + bx + c
-		// y = (25x² + 205x + 330)/28
-		// y = 25x²/28 + 205x/28 + 165x/14
+		// y = ax^2 + bx + c
+		// y = (25x^2 + 205x + 330)/28
+		// y = 25x^2/28 + 205x/28 + 165x/14
 		// Wave 1: 20
 		// Wave >= 9: 150
 
@@ -1230,44 +1234,44 @@ public class PlayingState extends ArenaState
 		zombiesToSpawn = 0;
 		skeletonsToSpawn = 0;
 		villagersToSpawn = 0;
-		
+
 		withersToSpawn = 0;
 
 		// Boss wave:
-		if (currentWave%10 == 0 && currentWave > 0)
+		if (currentWave % 10 == 0 && currentWave > 0)
 		{
-			//amount *= 0.25;
-			
+			// amount *= 0.25;
+
 			// Spawn the boss(es).
-			withersToSpawn = currentWave/10;
-			
+			withersToSpawn = currentWave / 10;
+
 			for (int i = 0; i < 3; i++)
 				this.Broadcast("BOSS WAVE!!! Be prepared!");
-			
+
 			for (Player player : this.players)
 			{
 				// TODO: replace "cat_purr" with a scary sound.
 				player.playSound(player.getLocation(), Sound.CAT_PURR, 1.5f, 0.5f);
 				player.playSound(player.getLocation(), Sound.GHAST_SCREAM, 1.5f, 0.25f);
-			} 
+			}
 
 		}
-		
+
 		if (currentWave > 10)
 		{
-			//skeletonsToSpawn = amount / 5;
+			// skeletonsToSpawn = amount / 5;
 			villagersToSpawn = amount / 2;
 			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else if (currentWave >= 5)
 		{
-			//skeletonsToSpawn = amount / 15;
+			// skeletonsToSpawn = amount / 15;
 			villagersToSpawn = amount / 20;
 			zombiesToSpawn = amount - skeletonsToSpawn - villagersToSpawn;
 		}
 		else
 		{
-			//skeletonsToSpawn = amount / 20;
+			// skeletonsToSpawn = amount / 20;
 			zombiesToSpawn = amount;
 		}
 

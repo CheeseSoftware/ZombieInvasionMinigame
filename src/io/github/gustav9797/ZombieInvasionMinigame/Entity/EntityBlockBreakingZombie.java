@@ -69,18 +69,7 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 		if (state != null)
 			this.goalSelector.a(0, new PathfinderGoalWalkToTile(this, 1.0F, state.getSpawnLocation()));
 		
-		/*if (random.nextInt(8) == 0)
-		{
-			//ItemStack[] equipment = this.getEquipment();
-			//vågar inte göra något mer:/ skeletonhuvuden!
-			
-			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 20, true));
-		}
-		else*/
-		//{
-			this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 15, true));
-		//}
-		
+		this.goalSelector.a(1, new PathfinderGoalBreakBlock(this, state, 15, true));	
 		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, state));
 	}
 
