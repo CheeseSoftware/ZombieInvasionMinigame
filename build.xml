@@ -61,10 +61,9 @@
 			<classpath refid="run.New_configuration (6).classpath" />
 		</java>
 	</target>
-	
 	<target name="jar">
 		<mkdir dir="jar" />
-		<jar destfile="jar/ZombieInvasionMinigame-BUILD_NUMBER.jar" basedir="bin">
+		<jar destfile="jar/ZombieInvasionMinigame-${env.BUILD_NUMBER}.jar" basedir="bin">
 			<manifest>
 				<attribute name="Main-Class" value="io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame" />
 			</manifest>
