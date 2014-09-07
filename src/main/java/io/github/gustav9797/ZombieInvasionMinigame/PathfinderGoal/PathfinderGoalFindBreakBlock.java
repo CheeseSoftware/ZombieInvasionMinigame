@@ -14,8 +14,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.LeavesDecayEvent;
 
-import net.minecraft.server.v1_7_R3.EntityInsentient;
-import net.minecraft.server.v1_7_R3.PathfinderGoal;
+import net.minecraft.server.v1_7_R4.EntityInsentient;
+import net.minecraft.server.v1_7_R4.PathfinderGoal;
 
 public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 {

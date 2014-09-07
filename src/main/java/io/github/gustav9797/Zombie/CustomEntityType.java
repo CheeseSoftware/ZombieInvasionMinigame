@@ -3,9 +3,9 @@ package io.github.gustav9797.Zombie;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import net.minecraft.server.v1_7_R3.EntityInsentient;
-import net.minecraft.server.v1_7_R3.EntityTypes;
-import net.minecraft.server.v1_7_R3.IMonster;
+import net.minecraft.server.v1_7_R4.EntityInsentient;
+import net.minecraft.server.v1_7_R4.EntityTypes;
+import net.minecraft.server.v1_7_R4.IMonster;
 
 import org.bukkit.entity.EntityType;
 

@@ -5,11 +5,11 @@ import java.util.Random;
 import io.github.gustav9797.State.PlayingState;
 
 import org.bukkit.GameMode;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.EntityLiving;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.EntityLiving;
 
 public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalCustomTarget
 {

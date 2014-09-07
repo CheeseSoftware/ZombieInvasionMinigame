@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.EntityPlayer;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -20,9 +20,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_7_R3.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftZombie;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -875,7 +875,7 @@ public class PlayingState extends ArenaState
 				{
 					CraftZombie zombie;
 
-					net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.world).getHandle();
+					net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) this.world).getHandle();
 					EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
 					((EntityBlockBreakingZombie) monster).setPlayingState(this);
 
@@ -1019,7 +1019,7 @@ public class PlayingState extends ArenaState
 		while (i.hasNext() && monsters.size() < map.maxZombieAmount)
 		{
 			SpawnPoint spawnPoint = i.next();
-			net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) this.world).getHandle();
+			net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) this.world).getHandle();
 			EntityCreature monster = null;
 
 			ArrayList<String> possibleEntityTypes = new ArrayList<String>();

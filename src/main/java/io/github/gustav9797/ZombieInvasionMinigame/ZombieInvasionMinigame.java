@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.server.v1_7_R3.BiomeBase;
-import net.minecraft.server.v1_7_R3.BiomeMeta;
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.EntityVillager;
-import net.minecraft.server.v1_7_R3.EntityWither;
-import net.minecraft.server.v1_7_R3.EntityZombie;
-import net.minecraft.server.v1_7_R3.EntitySkeleton;
+import net.minecraft.server.v1_7_R4.BiomeBase;
+import net.minecraft.server.v1_7_R4.BiomeMeta;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.EntityVillager;
+import net.minecraft.server.v1_7_R4.EntityWither;
+import net.minecraft.server.v1_7_R4.EntityZombie;
+import net.minecraft.server.v1_7_R4.EntitySkeleton;
 import net.minecraft.util.com.google.common.io.ByteArrayDataOutput;
 import net.minecraft.util.com.google.common.io.ByteStreams;
 
@@ -37,7 +37,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -204,7 +204,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 			}
 			/*
 			 * else if (cmd.getName().equals("zombie")) {
-			 * net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld)
+			 * net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld)
 			 * this.arena.middle.getWorld()).getHandle(); EntityCreature monster
 			 * = new EntityBlockBreakingZombie(mcWorld);
 			 * ((EntityBlockBreakingZombie)
@@ -477,7 +477,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 						}
 						else if (args[0].equals("wither"))
 						{
-							net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) player.getWorld()).getHandle();
+							net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) player.getWorld()).getHandle();
 							EntityCreature monster = new EntityBossWither(mcWorld);
 							monster.getBukkitEntity().teleport(player.getLocation());
 							mcWorld.addEntity(monster, SpawnReason.CUSTOM);
@@ -635,7 +635,7 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		{
 			event.setCancelled(true);
 			EntityCreature monster = null;
-			net.minecraft.server.v1_7_R3.World mcWorld = ((CraftWorld) event.getLocation().getWorld()).getHandle();
+			net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) event.getLocation().getWorld()).getHandle();
 
 			switch (event.getEntityType())
 			{

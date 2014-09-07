@@ -4,17 +4,17 @@ import java.util.Random;
 
 import org.bukkit.Location;
 
-import net.minecraft.server.v1_7_R3.AttributeInstance;
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntityLiving;
-import net.minecraft.server.v1_7_R3.EntityOwnable;
-import net.minecraft.server.v1_7_R3.EntityPlayer;
-import net.minecraft.server.v1_7_R3.GenericAttributes;
-import net.minecraft.server.v1_7_R3.MathHelper;
-import net.minecraft.server.v1_7_R3.PathEntity;
-import net.minecraft.server.v1_7_R3.PathPoint;
-import net.minecraft.server.v1_7_R3.PathfinderGoal;
+import net.minecraft.server.v1_7_R4.AttributeInstance;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntityLiving;
+import net.minecraft.server.v1_7_R4.EntityOwnable;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_7_R4.GenericAttributes;
+import net.minecraft.server.v1_7_R4.MathHelper;
+import net.minecraft.server.v1_7_R4.PathEntity;
+import net.minecraft.server.v1_7_R4.PathPoint;
+import net.minecraft.server.v1_7_R4.PathfinderGoal;
 import net.minecraft.util.org.apache.commons.lang3.StringUtils;
 
 public abstract class PathfinderGoalCustomTarget extends PathfinderGoal

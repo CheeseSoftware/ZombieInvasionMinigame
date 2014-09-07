@@ -2,8 +2,8 @@ package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import org.bukkit.Location;
 
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.PathfinderGoal;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.PathfinderGoal;
 
 public class PathfinderGoalWalkToTile extends PathfinderGoal
 {

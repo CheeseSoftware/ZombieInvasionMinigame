@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.v1_7_R3.EntityCreature;
-import net.minecraft.server.v1_7_R3.EntityInsentient;
-import net.minecraft.server.v1_7_R3.PathfinderGoal;
+import net.minecraft.server.v1_7_R4.EntityCreature;
+import net.minecraft.server.v1_7_R4.EntityInsentient;
+import net.minecraft.server.v1_7_R4.PathfinderGoal;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -246,7 +246,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 						block.setType(Material.AIR);
 						this.entity.world.triggerEffect(1012, block.getX(), block.getY(), block.getZ(), 0);
 						this.entity.world.triggerEffect(2001, block.getX(), block.getY(), block.getZ(),
-								net.minecraft.server.v1_7_R3.Block.b(this.entity.world.getType(block.getX(), block.getY(), block.getZ())));
+								this.entity.world.getType(block.getX(), block.getY(), block.getZ()).b());
 						block = null;
 					}
 				}

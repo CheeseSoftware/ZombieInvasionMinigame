@@ -7,19 +7,19 @@ import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoal
 import java.lang.reflect.Field;
 import java.util.Random;
 
-import org.bukkit.craftbukkit.v1_7_R3.util.UnsafeList;
+import org.bukkit.craftbukkit.v1_7_R4.util.UnsafeList;
 
-import net.minecraft.server.v1_7_R3.AttributeInstance;
-import net.minecraft.server.v1_7_R3.Entity;
-import net.minecraft.server.v1_7_R3.EntityHuman;
-import net.minecraft.server.v1_7_R3.EntitySkeleton;
-import net.minecraft.server.v1_7_R3.Navigation;
-import net.minecraft.server.v1_7_R3.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_7_R3.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R3.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_7_R3.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_7_R3.PathfinderGoalSelector;
-import net.minecraft.server.v1_7_R3.World;
+import net.minecraft.server.v1_7_R4.AttributeInstance;
+import net.minecraft.server.v1_7_R4.Entity;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntitySkeleton;
+import net.minecraft.server.v1_7_R4.Navigation;
+import net.minecraft.server.v1_7_R4.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_7_R4.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_7_R4.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.server.v1_7_R4.PathfinderGoalRandomLookaround;
+import net.minecraft.server.v1_7_R4.PathfinderGoalSelector;
+import net.minecraft.server.v1_7_R4.World;
 
 public class EntityBlockBreakingSkeleton extends EntitySkeleton implements ICustomMonster
 {
