@@ -200,6 +200,7 @@ public class VotingState extends ArenaState
 			if (voting)
 			{
 				final Player player = event.getPlayer();
+				player.getInventory().clear();
 				this.votingPlayers.add(player);
 				World lobbyWorld = arena.getLobbyWorld();
 				if (lobbyWorld == null)
