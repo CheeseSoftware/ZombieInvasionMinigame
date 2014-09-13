@@ -38,6 +38,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -60,7 +63,9 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 
 import ostkaka34.OstEconomyPlugin.IOstEconomy;
+import ostkaka34.OstEconomyPlugin.ItemStackShopItem;
 import ostkaka34.OstEconomyPlugin.OstEconomyPlugin;
+import ostkaka34.OstEconomyPlugin.ShopItem;
 
 public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 {
@@ -101,21 +106,73 @@ public final class ZombieInvasionMinigame extends JavaPlugin implements Listener
 		}
 		else
 		{
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Wood Sword", Material.WOOD_SWORD, 100, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stone Sword", Material.STONE_SWORD, 250, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Gold Sword", Material.GOLD_SWORD, 500, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Iron Sword", Material.IRON_SWORD, 1000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Sword", Material.DIAMOND_SWORD, 1500, 0, false, 1);
+			//////////////////////////////////////////////
+			//               SHOP ITEMS                 //
+			//////////////////////////////////////////////
 			
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Bow", Material.BOW, 250, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Stack of Arrows", Material.ARROW, 100, 0, false, 64);
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Wood Sword", Material.WOOD_SWORD, 100, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Stone Sword", Material.STONE_SWORD, 250, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Gold Sword", Material.GOLD_SWORD, 500, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Iron Sword", Material.IRON_SWORD, 1000, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Diamond Sword", Material.DIAMOND_SWORD, 1500, 0, false, 1));
 			
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Bone Key", Material.BONE, 500, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Disc Key", Material.RECORD_11, 1000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Iron Key", Material.IRON_INGOT, 2000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Gold Key", Material.GOLD_INGOT, 3000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Emerald Key", Material.EMERALD, 4000, 0, false, 1);
-			ZombieInvasionMinigame.economyPlugin.RegisterShopItem("Diamond Key", Material.DIAMOND, 5000, 0, false, 1);
+			// Lucky Paper
+			{
+				ItemStack bowItem = new ItemStack(Material.PAPER);
+				bowItem.setAmount(10);
+				bowItem.setDurability((short) 1);
+				
+				ItemMeta itemMeta = bowItem.getItemMeta();
+				
+				itemMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+				itemMeta.addEnchant(Enchantment.DAMAGE_ALL, 4, true);
+				itemMeta.addEnchant(Enchantment.LOOT_BONUS_MOBS, 10, true);
+				
+				bowItem.setItemMeta(itemMeta);
+				
+				ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ItemStackShopItem("Lucky Paper", bowItem, 200, 0, false, 4));
+			}
+			
+			// Bow
+			{
+				ItemStack bowItem = new ItemStack(Material.BOW);
+				ItemMeta itemMeta = bowItem.getItemMeta();
+				
+				itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 4, true);
+				itemMeta.addEnchant(Enchantment.DURABILITY, 2, true);
+				itemMeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 1, true);
+				itemMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
+				
+				bowItem.setItemMeta(itemMeta);
+				
+				ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ItemStackShopItem("Bow", bowItem, 50, 0, false, 1));
+			}
+			
+			// Fire Bow
+			{
+				ItemStack fireBowItem = new ItemStack(Material.BOW);
+				ItemMeta itemMeta = fireBowItem.getItemMeta();
+				
+				itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 6, true);
+				itemMeta.addEnchant(Enchantment.DURABILITY, 4, true);
+				itemMeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 3, true);
+				itemMeta.addEnchant(Enchantment.ARROW_FIRE, 3, true);
+				itemMeta.addEnchant(Enchantment.DIG_SPEED, 1, true);
+				
+				fireBowItem.setItemMeta(itemMeta);
+				
+				ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ItemStackShopItem("Fire Bow", fireBowItem, 200, 0, false, 1));
+			}
+			
+
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Stack of Arrows", Material.ARROW, 10, 0, false, 64));
+			
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Bone Key", Material.BONE, 500, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Disc Key", Material.RECORD_11, 1000, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Iron Key", Material.IRON_INGOT, 2000, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Gold Key", Material.GOLD_INGOT, 3000, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Emerald Key", Material.EMERALD, 4000, 0, false, 1));
+			ZombieInvasionMinigame.economyPlugin.RegisterShopItem(new ShopItem("Diamond Key", Material.DIAMOND, 5000, 0, false, 1));
 		}
 
 		this.lobbyWorld = this.getServer().getWorld("lobby");
