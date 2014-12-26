@@ -7,19 +7,18 @@ import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoal
 import java.lang.reflect.Field;
 import java.util.Random;
 
-import org.bukkit.craftbukkit.v1_7_R4.util.UnsafeList;
+import org.bukkit.craftbukkit.v1_8_R1.util.UnsafeList;
 
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntitySkeleton;
-import net.minecraft.server.v1_7_R4.Navigation;
-import net.minecraft.server.v1_7_R4.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_7_R4.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R4.PathfinderGoalNearestAttackableTarget;
-import net.minecraft.server.v1_7_R4.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_7_R4.PathfinderGoalSelector;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntitySkeleton;
+import net.minecraft.server.v1_8_R1.Navigation;
+import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_8_R1.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_8_R1.PathfinderGoalNearestAttackableTarget;
+import net.minecraft.server.v1_8_R1.PathfinderGoalRandomLookaround;
+import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R1.World;
 
 public class EntityBlockBreakingSkeleton extends EntitySkeleton implements ICustomMonster
 {
@@ -52,12 +51,12 @@ public class EntityBlockBreakingSkeleton extends EntitySkeleton implements ICust
 			e.printStackTrace();
 		}
 
-		this.getNavigation().b(true);
+		((Navigation) this.getNavigation()).b(true);
 		// this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this,
 		// EntityHuman.class, 1.0D, false));
 		this.goalSelector.a(1, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
 		this.goalSelector.a(1, new PathfinderGoalRandomLookaround(this));
-		this.goalSelector.a(1, new PathfinderGoalNearestAttackableTarget(this, EntityHuman.class, 0, true));
+		this.goalSelector.a(1, new PathfinderGoalNearestAttackableTarget(this, EntityHuman.class, true));
 		this.targetSelector.a(2, new PathfinderGoalHurtByTarget(this, true));
 		this.a(0.6F, 1.8F);
 
@@ -85,10 +84,10 @@ public class EntityBlockBreakingSkeleton extends EntitySkeleton implements ICust
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public Entity findTarget()
 	{
 		return super.findTarget();
-	}
+	}*/
 
 }

@@ -3,13 +3,12 @@ package io.github.gustav9797.Zombie;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.EntityTypes;
-import net.minecraft.server.v1_7_R4.IMonster;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityTypes;
 
 import org.bukkit.entity.EntityType;
 
-public class CustomEntityType implements IMonster
+public class CustomEntityType implements net.minecraft.server.v1_8_R1.IMonster
 {
 	// SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class,
 	// CustomEntitySkeleton.class),
@@ -17,10 +16,10 @@ public class CustomEntityType implements IMonster
 	private String name;
 	private int id;
 	private EntityType entityType;
-	private Class<? extends EntityInsentient> nmsClass;
-	private Class<? extends EntityInsentient> customClass;
+	private Class<? extends EntityCreature> nmsClass;
+	private Class<? extends EntityCreature> customClass;
 
-	public CustomEntityType(String name, int id, EntityType entityType, Class<? extends EntityInsentient> nmsClass, Class<? extends EntityInsentient> customClass)
+	public CustomEntityType(String name, int id, EntityType entityType, Class<? extends EntityCreature> nmsClass, Class<? extends EntityCreature> customClass)
 	{
 		this.name = name;
 		this.id = id;
@@ -45,12 +44,12 @@ public class CustomEntityType implements IMonster
 		return this.entityType;
 	}
 
-	public Class<? extends EntityInsentient> getNMSClass()
+	public Class<? extends EntityCreature> getNMSClass()
 	{
 		return this.nmsClass;
 	}
 
-	public Class<? extends EntityInsentient> getCustomClass()
+	public Class<? extends EntityCreature> getCustomClass()
 	{
 		return this.customClass;
 	}

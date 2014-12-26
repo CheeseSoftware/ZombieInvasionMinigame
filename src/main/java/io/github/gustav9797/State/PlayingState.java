@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -20,9 +20,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftZombie;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -50,8 +50,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
-import ostkaka34.OstEconomyPlugin.OstEconomyPlugin;
-
+import com.github.cheesesoftware.OstEconomyPlugin.OstEconomyPlugin;
 import com.sk89q.worldedit.CuboidClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
@@ -357,7 +356,6 @@ public class PlayingState extends ArenaState
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void MakeSpectator(Player player)
 	{
 		if (!spectators.contains(player))
@@ -375,9 +373,9 @@ public class PlayingState extends ArenaState
 
 		for (EntityCreature monster : monsters.values())
 		{
-			if (monster.target != null && monster.target instanceof EntityPlayer)
+			if (monster.getGoalTarget() != null && monster.getGoalTarget() instanceof EntityPlayer)
 			{
-				EntityPlayer target = (EntityPlayer) monster.target;
+				EntityPlayer target = (EntityPlayer) monster.getGoalTarget();
 				if (this.spectators.contains(target.getBukkitEntity()))
 				{
 					List<Player> possiblePlayers = new ArrayList<Player>();
@@ -387,7 +385,7 @@ public class PlayingState extends ArenaState
 							possiblePlayers.add(poss);
 					}
 					if (possiblePlayers.size() != 0)
-						monster.setTarget(((CraftPlayer) possiblePlayers.get(r.nextInt(possiblePlayers.size()))).getHandle());
+						monster.setGoalTarget(((CraftPlayer) possiblePlayers.get(r.nextInt(possiblePlayers.size()))).getHandle());
 				}
 			}
 		}
@@ -826,7 +824,6 @@ public class PlayingState extends ArenaState
 			this.Broadcast(player.getName() + " has joined the arena!");
 	}
 
-	@SuppressWarnings("deprecation")
 	public void RemovePlayer(Player player, String reason)
 	{
 		while (players.contains(player))
@@ -875,7 +872,7 @@ public class PlayingState extends ArenaState
 				{
 					CraftZombie zombie;
 
-					net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) this.world).getHandle();
+					net.minecraft.server.v1_8_R1.World mcWorld = ((CraftWorld) this.world).getHandle();
 					EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
 					((EntityBlockBreakingZombie) monster).setPlayingState(this);
 
@@ -1019,7 +1016,7 @@ public class PlayingState extends ArenaState
 		while (i.hasNext() && monsters.size() < map.maxZombieAmount)
 		{
 			SpawnPoint spawnPoint = i.next();
-			net.minecraft.server.v1_7_R4.World mcWorld = ((CraftWorld) this.world).getHandle();
+			net.minecraft.server.v1_8_R1.World mcWorld = ((CraftWorld) this.world).getHandle();
 			EntityCreature monster = null;
 
 			ArrayList<String> possibleEntityTypes = new ArrayList<String>();
@@ -1250,7 +1247,6 @@ public class PlayingState extends ArenaState
 
 			for (Player player : this.players)
 			{
-				// TODO: replace "cat_purr" with a scary sound.
 				player.playSound(player.getLocation(), Sound.CAT_PURR, 1.5f, 0.5f);
 				player.playSound(player.getLocation(), Sound.GHAST_SCREAM, 1.5f, 0.25f);
 			}

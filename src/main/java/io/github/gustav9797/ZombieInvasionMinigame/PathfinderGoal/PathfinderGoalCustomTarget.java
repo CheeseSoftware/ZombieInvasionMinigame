@@ -2,20 +2,20 @@ package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.EntityOwnable;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
-import net.minecraft.server.v1_7_R4.GenericAttributes;
-import net.minecraft.server.v1_7_R4.MathHelper;
-import net.minecraft.server.v1_7_R4.PathEntity;
-import net.minecraft.server.v1_7_R4.PathPoint;
-import net.minecraft.server.v1_7_R4.PathfinderGoal;
-import net.minecraft.util.org.apache.commons.lang3.StringUtils;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.EntityOwnable;
+import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R1.PathEntity;
+import net.minecraft.server.v1_8_R1.PathPoint;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
 
 public abstract class PathfinderGoalCustomTarget extends PathfinderGoal
 {
@@ -56,7 +56,7 @@ public abstract class PathfinderGoalCustomTarget extends PathfinderGoal
 		{
 			double d0 = this.f();
 
-			if (this.entity.e(entityliving) > d0 * d0)
+			if (this.entity.h(entityliving) > d0 * d0)
 			{
 				return false;
 			}
@@ -150,10 +150,11 @@ public abstract class PathfinderGoalCustomTarget extends PathfinderGoal
 				return false;
 			}
 
-			if (!this.entity.b(MathHelper.floor(target.locX), MathHelper.floor(target.locY), MathHelper.floor(target.locZ)))
+			//if (!this.entity.b(MathHelper.floor(target.locX), MathHelper.floor(target.locY), MathHelper.floor(target.locZ)))
 			{
-				return false;
+			//	return false;
 			}
+			//TODO: FIX
 			
 			//else if (this.d && !this.c.getEntitySenses().canSee(target)) {
 			//return false; } else

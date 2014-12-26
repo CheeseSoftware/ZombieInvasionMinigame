@@ -12,100 +12,92 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.event.block.LeavesDecayEvent;
 
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.PathfinderGoal;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.PacketPlayOutBlockBreakAnimation;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
 
-public class PathfinderGoalFindBreakBlock extends PathfinderGoal
-{
-	EntityInsentient entity;
-	PlayingState state;
-	Location oldLocation = null;
-	int findRadius = 10;
-	int findHeight = 2;
-	int ticksStoodStill = 0;
-	int blockDamageIncrease = 5;
-	boolean isBreaking = false;
-	boolean isWalking = false;
-	Block currentBlock = null;
-	int currentBlockDamage = 0;
-	int ticksPassed = 0;
-	boolean blockBroken = false;
-	boolean couldNotWalkToBlock = false;
-	List<Block> blocksNotWalkable = new ArrayList<Block>();
-	Random r = new Random();
+public class PathfinderGoalFindBreakBlock extends PathfinderGoal {
+    EntityInsentient entity;
+    PlayingState state;
+    Location oldLocation = null;
+    int findRadius = 10;
+    int findHeight = 2;
+    int ticksStoodStill = 0;
+    int blockDamageIncrease = 5;
+    boolean isBreaking = false;
+    boolean isWalking = false;
+    Block currentBlock = null;
+    int currentBlockDamage = 0;
+    int ticksPassed = 0;
+    boolean blockBroken = false;
+    boolean couldNotWalkToBlock = false;
+    List<Block> blocksNotWalkable = new ArrayList<Block>();
+    Random r = new Random();
 
-	@SuppressWarnings("deprecation")
-	private static List<Material> nonBreakableMaterials = new ArrayList<Material>(Arrays.asList(Material.BEDROCK, Material.getMaterial(8), Material.getMaterial(9), Material.GRASS, Material.SAND,
-			Material.AIR, Material.QUARTZ_BLOCK, Material.STONE));
-	private static List<Material> naturalMaterials = new ArrayList<Material>(Arrays.asList(Material.GRASS, Material.DIRT, Material.LEAVES));
-	private static List<Material> priorityMaterials = new ArrayList<Material>(Arrays.asList(Material.WOOD_DOOR, Material.IRON_DOOR, Material.TRAP_DOOR, Material.CHEST, Material.THIN_GLASS,
-			Material.STAINED_GLASS, Material.STAINED_GLASS_PANE, Material.GLASS, Material.THIN_GLASS/*
-																									 * ,
-																									 * Material
-																									 * .
-																									 * TORCH
-																									 * ,
-																									 * Material
-																									 * .
-																									 * WOOL
-																									 */));
+    @SuppressWarnings("deprecation")
+    private static List<Material> nonBreakableMaterials = new ArrayList<Material>(Arrays.asList(Material.BEDROCK, Material.getMaterial(8), Material.getMaterial(9), Material.GRASS, Material.SAND,
+	    Material.AIR, Material.QUARTZ_BLOCK, Material.STONE));
+    private static List<Material> naturalMaterials = new ArrayList<Material>(Arrays.asList(Material.GRASS, Material.DIRT, Material.LEAVES));
+    private static List<Material> priorityMaterials = new ArrayList<Material>(Arrays.asList(Material.WOOD_DOOR, Material.IRON_DOOR, Material.TRAP_DOOR, Material.CHEST, Material.THIN_GLASS,
+	    Material.STAINED_GLASS, Material.STAINED_GLASS_PANE, Material.GLASS, Material.THIN_GLASS/*
+												     * , Material . TORCH , Material . WOOL
+												     */));
 
-	public PathfinderGoalFindBreakBlock(EntityInsentient entity, PlayingState state, int blockDamageIncrease)
-	{
-		this.entity = entity;
-		this.state = state;
-		this.blockDamageIncrease = blockDamageIncrease;
+    public PathfinderGoalFindBreakBlock(EntityInsentient entity, PlayingState state, int blockDamageIncrease) {
+	this.entity = entity;
+	this.state = state;
+	this.blockDamageIncrease = blockDamageIncrease;
+    }
+
+    @Override
+    public boolean a() // canExecute
+    {
+	this.ticksPassed++;
+	if (this.ticksPassed < 50)
+	    return false;
+	else {
+	    this.ticksPassed = 0;
+	    return !this.isBreaking && this.CanFindABlock();
 	}
+    }
 
-	@Override
-	public boolean a() // canExecute
-	{
-		this.ticksPassed++;
-		if (this.ticksPassed < 50)
-			return false;
-		else
-		{
-			this.ticksPassed = 0;
-			return !this.isBreaking && this.CanFindABlock();
-		}
+    @Override
+    public void c() // setup
+    {
+	super.c();
+	currentBlock = getRandomCloseBlock();
+	if (currentBlock != null) {
+	    currentBlockDamage = 0;
+	    ticksStoodStill = 0;
+	    isBreaking = true;
+	    this.couldNotWalkToBlock = false;
+	    Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
+
+	    boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
+	    if (foundPath) {
+		this.isWalking = true;
+	    }
 	}
+    }
 
-	@Override
-	public void c() // setup
-	{
-		super.c();
-		currentBlock = getRandomCloseBlock();
-		if (currentBlock != null)
-		{
-			currentBlockDamage = 0;
-			ticksStoodStill = 0;
-			isBreaking = true;
-			this.couldNotWalkToBlock = false;
-			Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
+    @Override
+    public boolean b() // canContinue
+    {
+	return true;
+    }
 
-			boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
-			if (foundPath)
-			{
-				this.isWalking = true;
-			}
-		}
-	}
+    @Override
+    public void d() // finish
+    {
+	super.d();
+    }
 
-	@Override
-	public boolean b() // canContinue
-	{
-		return true;
-	}
-
-	@Override
-	public void d() // finish
-	{
-		super.d();
-	}
-
-	@Override
+    @Override
 	public void e() // move
 	{
 		Location currentLocation = this.entity.getBukkitEntity().getLocation();
@@ -167,9 +159,14 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 			{
 				currentBlockDamage += this.blockDamageIncrease;
 				if (r.nextInt(300) == 0)
-					this.entity.world.triggerEffect(1010, currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 0);
+					this.entity.world.triggerEffect(1010, new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), 0);
 				int i = (int) ((float) this.currentBlockDamage / 240.0F * 10.0F);
-				this.entity.world.d(entity.getId(), currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), i);
+				//this.entity.world.(entity.getId(), new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), i);
+				
+				BlockPosition pos = new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ());
+				((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 120, 
+					((CraftWorld)currentBlock.getWorld()).getHandle().dimension, new PacketPlayOutBlockBreakAnimation(entity.getId(), pos, i));
+				
 				if (currentBlockDamage >= 240)
 				{
 					currentBlock.setType(Material.AIR);
@@ -186,7 +183,12 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 			else
 			{
 				if (this.currentBlock != null)
-					this.entity.world.d(entity.getId(), currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 0);
+				{
+				    //this.entity.world.d(entity.getId(), currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 0);
+				    BlockPosition pos = new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ());
+				    ((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 120, 
+					    ((CraftWorld)currentBlock.getWorld()).getHandle().dimension, new PacketPlayOutBlockBreakAnimation(entity.getId(), pos, 0));
+				}
 				currentBlock = null;
 				isBreaking = false;
 				this.blockBroken = true;
@@ -196,86 +198,73 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal
 		this.oldLocation = currentLocation;
 	}
 
-	public boolean CanFindABlock()
-	{
-		List<Block> blocks = this.getCloseBlocks();
-		if (blocks.size() > 0)
-			return true;
-		return false;
-	}
+    public boolean CanFindABlock() {
+	List<Block> blocks = this.getCloseBlocks();
+	if (blocks.size() > 0)
+	    return true;
+	return false;
+    }
 
-	public List<Block> getCloseBlocks()
-	{
-		Location loc = this.entity.getBukkitEntity().getLocation();
-		List<Block> blocks = new ArrayList<Block>();
-		for (int y = loc.getBlockY() + findHeight + 1; y >= loc.getBlockY(); y--)
-		{
-			for (int x = loc.getBlockX() - findRadius; x < loc.getBlockX() + findRadius; x++)
-			{
-				for (int z = loc.getBlockZ() - findRadius; z < loc.getBlockZ() + findRadius; z++)
-				{
-					Block block = this.entity.getBukkitEntity().getWorld().getBlockAt(x, y, z);
-					if (!nonBreakableMaterials.contains(block.getType()) && !this.blocksNotWalkable.contains(block))
-					{
-						if (state == null || (state != null && !state.isBorder(block.getLocation().toVector())))
-							blocks.add(block);
-					}
-				}
-			}
+    public List<Block> getCloseBlocks() {
+	Location loc = this.entity.getBukkitEntity().getLocation();
+	List<Block> blocks = new ArrayList<Block>();
+	for (int y = loc.getBlockY() + findHeight + 1; y >= loc.getBlockY(); y--) {
+	    for (int x = loc.getBlockX() - findRadius; x < loc.getBlockX() + findRadius; x++) {
+		for (int z = loc.getBlockZ() - findRadius; z < loc.getBlockZ() + findRadius; z++) {
+		    Block block = this.entity.getBukkitEntity().getWorld().getBlockAt(x, y, z);
+		    if (!nonBreakableMaterials.contains(block.getType()) && !this.blocksNotWalkable.contains(block)) {
+			if (state == null || (state != null && !state.isBorder(block.getLocation().toVector())))
+			    blocks.add(block);
+		    }
 		}
-		return blocks;
+	    }
+	}
+	return blocks;
+    }
+
+    public Block getRandomCloseBlock() {
+	List<Block> blocks = this.getCloseBlocks();
+	List<Block> highPriorityBlocks = new ArrayList<Block>();
+	List<Block> normalPriorityBlocks = new ArrayList<Block>();
+	List<Block> lowPriorityBlocks = new ArrayList<Block>();
+	for (Block block : blocks) {
+	    if (block.getType().isSolid() && !nonBreakableMaterials.contains(block.getType()) && (state == null || state.ContainsLocation(block.getLocation()))) {
+		if (priorityMaterials.contains(block.getType()))
+		    highPriorityBlocks.add(block);
+		else if (naturalMaterials.contains(block.getType()))
+		    lowPriorityBlocks.add(block);
+		else
+		    normalPriorityBlocks.add(block);
+	    }
 	}
 
-	public Block getRandomCloseBlock()
-	{
-		List<Block> blocks = this.getCloseBlocks();
-		List<Block> highPriorityBlocks = new ArrayList<Block>();
-		List<Block> normalPriorityBlocks = new ArrayList<Block>();
-		List<Block> lowPriorityBlocks = new ArrayList<Block>();
-		for (Block block : blocks)
-		{
-			if (block.getType().isSolid() && !nonBreakableMaterials.contains(block.getType()) && (state == null || state.ContainsLocation(block.getLocation())))
-			{
-				if (priorityMaterials.contains(block.getType()))
-					highPriorityBlocks.add(block);
-				else if (naturalMaterials.contains(block.getType()))
-					lowPriorityBlocks.add(block);
-				else
-					normalPriorityBlocks.add(block);
-			}
+	List<Block> listToUse = null;
+	if (highPriorityBlocks.size() > 0)
+	    listToUse = highPriorityBlocks;
+	else if (normalPriorityBlocks.size() > 0)
+	    listToUse = normalPriorityBlocks;
+	else if (lowPriorityBlocks.size() > 0)
+	    listToUse = lowPriorityBlocks;
+	if (listToUse != null) {
+	    Block closest = null;
+	    double closestDistance = Integer.MAX_VALUE;
+	    for (Block block : listToUse) {
+		double distance = getDistanceBetween(block.getLocation(), this.entity.getBukkitEntity().getLocation());
+		if (closest == null || distance < closestDistance) {
+		    closestDistance = distance;
+		    closest = block;
 		}
-
-		List<Block> listToUse = null;
-		if (highPriorityBlocks.size() > 0)
-			listToUse = highPriorityBlocks;
-		else if (normalPriorityBlocks.size() > 0)
-			listToUse = normalPriorityBlocks;
-		else if (lowPriorityBlocks.size() > 0)
-			listToUse = lowPriorityBlocks;
-		if (listToUse != null)
-		{
-			Block closest = null;
-			double closestDistance = Integer.MAX_VALUE;
-			for (Block block : listToUse)
-			{
-				double distance = getDistanceBetween(block.getLocation(), this.entity.getBukkitEntity().getLocation());
-				if (closest == null || distance < closestDistance)
-				{
-					closestDistance = distance;
-					closest = block;
-				}
-			}
-			return closest;
-		}
-		return null;
+	    }
+	    return closest;
 	}
+	return null;
+    }
 
-	private double getDistanceBetween(Location a, Location b)
-	{
-		int xd = b.getBlockX() - a.getBlockX();
-		int yd = b.getBlockY() - a.getBlockY();
-		int zd = b.getBlockZ() - a.getBlockZ();
-		double distance = Math.sqrt(xd * xd + yd * yd + zd * zd);
-		return distance;
-	}
+    private double getDistanceBetween(Location a, Location b) {
+	int xd = b.getBlockX() - a.getBlockX();
+	int yd = b.getBlockY() - a.getBlockY();
+	int zd = b.getBlockZ() - a.getBlockZ();
+	double distance = Math.sqrt(xd * xd + yd * yd + zd * zd);
+	return distance;
+    }
 }

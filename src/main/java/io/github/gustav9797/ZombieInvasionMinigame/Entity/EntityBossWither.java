@@ -9,19 +9,18 @@ import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoal
 import java.lang.reflect.Field;
 import java.util.Random;
 
-import net.minecraft.server.v1_7_R4.AttributeInstance;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityHuman;
-import net.minecraft.server.v1_7_R4.EntityWither;
-import net.minecraft.server.v1_7_R4.Navigation;
-import net.minecraft.server.v1_7_R4.PathfinderGoalFloat;
-import net.minecraft.server.v1_7_R4.PathfinderGoalHurtByTarget;
-import net.minecraft.server.v1_7_R4.PathfinderGoalLookAtPlayer;
-import net.minecraft.server.v1_7_R4.PathfinderGoalRandomLookaround;
-import net.minecraft.server.v1_7_R4.PathfinderGoalSelector;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.AttributeInstance;
+import net.minecraft.server.v1_8_R1.EntityHuman;
+import net.minecraft.server.v1_8_R1.EntityWither;
+import net.minecraft.server.v1_8_R1.Navigation;
+import net.minecraft.server.v1_8_R1.PathfinderGoalFloat;
+import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
+import net.minecraft.server.v1_8_R1.PathfinderGoalLookAtPlayer;
+import net.minecraft.server.v1_8_R1.PathfinderGoalRandomLookaround;
+import net.minecraft.server.v1_8_R1.PathfinderGoalSelector;
+import net.minecraft.server.v1_8_R1.World;
 
-import org.bukkit.craftbukkit.v1_7_R4.util.UnsafeList;
+import org.bukkit.craftbukkit.v1_8_R1.util.UnsafeList;
 
 public class EntityBossWither extends EntityWither implements ICustomMonster
 {
@@ -54,7 +53,7 @@ public class EntityBossWither extends EntityWither implements ICustomMonster
 			e.printStackTrace();
 		}
 
-		this.getNavigation().b(true);
+		((Navigation) this.getNavigation()).b(true);	
 		this.goalSelector.a(6, new PathfinderGoalFloat(this));
 		this.goalSelector.a(7, new PathfinderGoalCustomMeleeAttack(this, EntityHuman.class, 1.0D, false));
 		this.goalSelector.a(8, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));
@@ -73,13 +72,13 @@ public class EntityBossWither extends EntityWither implements ICustomMonster
 		this.targetSelector.a(1, new PathfinderGoalCustomNearestAttackableTarget(this, 0, state));
 	}
 
-	@Override
+	/*@Override
 	protected Entity findTarget()
 	{
 		EntityHuman entityhuman = this.findNearbyVulnerablePlayer(128, 128, 128);
 
 		return entityhuman;
-	}
+	}*/
 
 	public EntityHuman findNearbyVulnerablePlayer(double d0, double d1, double d2)
 	{
@@ -94,10 +93,5 @@ public class EntityBossWither extends EntityWither implements ICustomMonster
 			}
 		}
 		return null;
-	}
-	
-	protected void bn()
-	{
-		
 	}
 }

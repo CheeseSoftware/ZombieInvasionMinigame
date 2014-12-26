@@ -4,14 +4,15 @@ import java.util.Random;
 
 import org.bukkit.Location;
 
-import net.minecraft.server.v1_7_R4.DamageSource;
-import net.minecraft.server.v1_7_R4.Entity;
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityLiving;
-import net.minecraft.server.v1_7_R4.MathHelper;
-import net.minecraft.server.v1_7_R4.PathEntity;
-import net.minecraft.server.v1_7_R4.PathfinderGoal;
-import net.minecraft.server.v1_7_R4.World;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.DamageSource;
+import net.minecraft.server.v1_8_R1.Entity;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityLiving;
+import net.minecraft.server.v1_8_R1.MathHelper;
+import net.minecraft.server.v1_8_R1.PathEntity;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
+import net.minecraft.server.v1_8_R1.World;
 
 public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 {
@@ -64,7 +65,7 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 
 	private boolean hasPathToWalk()
 	{
-		boolean bla = !this.entityCreature.getNavigation().g();
+		boolean bla = !this.entityCreature.getNavigation().m();
 		return bla;
 	}
 
@@ -100,8 +101,8 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 	{
 		EntityLiving entityliving = this.entityCreature.getGoalTarget();
 
-		return entityliving == null ? false : (!entityliving.isAlive() ? false : (!this.e ? !this.entityCreature.getNavigation().g() : this.entityCreature.b(MathHelper.floor(entityliving.locX),
-				MathHelper.floor(entityliving.locY), MathHelper.floor(entityliving.locZ))));
+		return entityliving == null ? false : (!entityliving.isAlive() ? false : (!this.e ? !this.entityCreature.getNavigation().m() : this.entityCreature.d(new BlockPosition(MathHelper.floor(entityliving.locX),
+				MathHelper.floor(entityliving.locY), MathHelper.floor(entityliving.locZ)))));
 	}
 
 	public void c() // setup
@@ -112,7 +113,7 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 
 	public void d() // finish
 	{
-		this.entityCreature.getNavigation().h(); // .end(), .stop()
+		this.entityCreature.getNavigation().m(); // .end(), .stop()
 	}
 
 	public void e() // move
@@ -122,15 +123,15 @@ public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
 		this.targetLocation = entityliving.getBukkitEntity().getLocation();
 
 		this.entityCreature.getControllerLook().a(entityliving, 30.0F, 30.0F);
-		double d0 = this.entityCreature.e(entityliving.locX, entityliving.boundingBox.b, entityliving.locZ);
+		double d0 = this.entityCreature.e(entityliving.locX, entityliving.getBoundingBox().b, entityliving.locZ);
 		double d1 = (double) (this.entityCreature.width * 2.0F * this.entityCreature.width * 2.0F + entityliving.width);
 
 		--this.h;
-		if ((this.e || this.entityCreature.getEntitySenses().canSee(entityliving)) && this.h <= 0
+		if ((this.e || this.entityCreature.getEntitySenses().a(entityliving)) && this.h <= 0
 				&& (this.locX == 0.0D && this.locY == 0.0D && this.locZ == 0.0D || entityliving.e(this.locX, this.locY, this.locZ) >= 1.0D || r.nextFloat() < 0.05F))
 		{
 			this.locX = entityliving.locX;
-			this.locY = entityliving.boundingBox.b;
+			this.locY = entityliving.getBoundingBox().b;
 			this.locZ = entityliving.locZ;
 			this.h = 4 + r.nextInt(7);
 			if (d0 > 1024.0D)

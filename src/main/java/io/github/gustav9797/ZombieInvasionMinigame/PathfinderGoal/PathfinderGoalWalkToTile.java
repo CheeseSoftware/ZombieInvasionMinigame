@@ -2,8 +2,8 @@ package io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal;
 
 import org.bukkit.Location;
 
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.PathfinderGoal;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
 
 public class PathfinderGoalWalkToTile extends PathfinderGoal
 {
@@ -39,7 +39,7 @@ public class PathfinderGoalWalkToTile extends PathfinderGoal
 	{
 		if(this.entityCreature.getBukkitEntity().getLocation().distance(this.goal) <= 15)
 			done = true;
-		return !done && !this.entityCreature.getNavigation().g();
+		return !done && !this.entityCreature.getNavigation().m();
 	}
 
 	@Override

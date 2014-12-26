@@ -3,70 +3,92 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="ZombieInvasionMinigame">
-	<property environment="env" />
-	<property name="debuglevel" value="source,lines,vars" />
-	<property name="target" value="1.7" />
-	<property name="source" value="1.7" />
-	<path id="ZombieInvasionMinigame.classpath">
-		<pathelement location="bin" />
-		<pathelement location="bukkit.jar" />
-		<pathelement location="craftbukkit.jar" />
-		<pathelement location="OstEconomyPlugin.jar" />
-		<pathelement location="WorldEdit.jar" />
-		<pathelement location="ZombieInvasion.jar" />
-	</path>
-	<path id="run.New_configuration (6).classpath">
-		<pathelement location="../../../Desktop/bukkitplugintest/craftbukkit.jar" />
-	</path>
-	<target name="init">
-		<mkdir dir="bin" />
-		<copy includeemptydirs="false" todir="bin">
-			<fileset dir="src">
-				<exclude name="**/*.launch" />
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-	</target>
-	<target name="clean">
-		<delete dir="bin" />
-	</target>
-	<target depends="clean" name="cleanall" />
-	<target depends="build-subprojects,build-project" name="build" />
-	<target name="build-subprojects" />
-	<target depends="init" name="build-project">
-		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-			<src path="src" />
-			<classpath refid="ZombieInvasionMinigame.classpath" />
-		</javac>
-	</target>
-	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
-	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-		<copy todir="${ant.library.dir}">
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
-		</copy>
-		<unzip dest="${ant.library.dir}">
-			<patternset includes="jdtCompilerAdapter.jar" />
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
-		</unzip>
-	</target>
-	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
-		<antcall target="build" />
-	</target>
-	<target name="New_configuration (6)">
-		<java classname="org.bukkit.craftbukkit.Main" dir="../../../Desktop/bukkitplugintest" failonerror="true" fork="yes">
-			<classpath refid="run.New_configuration (6).classpath" />
-		</java>
-	</target>
-	<target name="jar">
-		<mkdir dir="jar" />
-		<jar destfile="jar/ZombieInvasionMinigame-1.7.9-${env.BUILD_NUMBER}.jar" basedir="bin">
-			<manifest>
-				<attribute name="Main-Class" value="io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame" />
-			</manifest>
-		</jar>
-	</target>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="ZombieInvasionMinigame">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../Desktop/eclipse/"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../../.m2/repository/org/spigotmc/spigot-api/1.8-R0.1-SNAPSHOT/spigot-api-1.8-R0.1-SNAPSHOT.jar"/>
+        <pathelement location="../../../.m2/repository/org/bukkit/bukkit/1.8-R0.1-SNAPSHOT/bukkit-1.8-R0.1-SNAPSHOT.jar"/>
+        <pathelement location="../../../.m2/repository/org/bukkit/craftbukkit/1.8-R0.1-SNAPSHOT/craftbukkit-1.8-R0.1-SNAPSHOT.jar"/>
+        <pathelement location="../../../.m2/repository/com/sk89q/worldedit/5.6.2/worldedit-5.6.2.jar"/>
+        <pathelement location="../../../.m2/repository/de/schlichtherle/truezip/6.8.3/truezip-6.8.3.jar"/>
+        <pathelement location="../../../.m2/repository/rhino/js/1.7R2/js-1.7R2.jar"/>
+        <pathelement location="../../../.m2/repository/com/sk89q/jchronic/0.2.4a/jchronic-0.2.4a.jar"/>
+        <pathelement location="../../../.m2/repository/junit/junit/4.8.1/junit-4.8.1.jar"/>
+        <pathelement location="lib/OstEconomyPlugin.jar"/>
+    </path>
+    <path id="ZombieInvasionMinigame.classpath">
+        <pathelement location="target/classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+        <pathelement location="target/test-classes"/>
+        <pathelement location="lib/OstEconomyPlugin.jar"/>
+    </path>
+    <path id="run.New_configuration (6).classpath">
+        <pathelement location="../../../Desktop/bukkitplugintest/craftbukkit.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <mkdir dir="target/test-classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src/main/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src/main/resources">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/test-classes">
+            <fileset dir="src/test/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+        <delete dir="target/test-classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/main/java"/>
+            <src path="src/main/resources"/>
+            <exclude name="**"/>
+            <classpath refid="ZombieInvasionMinigame.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/test-classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/test/java"/>
+            <classpath refid="ZombieInvasionMinigame.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="New_configuration (6)">
+        <java classname="org.bukkit.craftbukkit.Main" dir="../../../Desktop/bukkitplugintest" failonerror="true" fork="yes">
+            <classpath refid="run.New_configuration (6).classpath"/>
+        </java>
+    </target>
 </project>

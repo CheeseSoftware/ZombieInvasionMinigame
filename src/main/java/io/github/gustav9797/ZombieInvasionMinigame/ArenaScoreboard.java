@@ -14,7 +14,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
-import ostkaka34.OstEconomyPlugin.OstEconomyPlugin;
+import com.github.cheesesoftware.OstEconomyPlugin.OstEconomyPlugin;
 
 public class ArenaScoreboard
 {

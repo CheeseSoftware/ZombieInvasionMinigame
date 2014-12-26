@@ -11,9 +11,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.v1_7_R4.EntityCreature;
-import net.minecraft.server.v1_7_R4.EntityInsentient;
-import net.minecraft.server.v1_7_R4.PathfinderGoal;
+import net.minecraft.server.v1_8_R1.BlockPosition;
+import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
+import net.minecraft.server.v1_8_R1.PathfinderGoal;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -208,7 +209,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 			if (block == null || block.getType() == Material.AIR || getDistanceBetween(block.getLocation(), entity.getLocation()) > 3.5)
 			{
 				if (block != null)
-					this.entity.world.d(this.entity.getId(), block.getX(), block.getY(), block.getZ(), 0);
+					this.entity.world.c(this.entity.getId(), new BlockPosition(block.getX(), block.getY(), block.getZ()), 0);
 				block = getRandomCloseBlock();
 				if (block == null)
 					return;
@@ -221,7 +222,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 
 				if (r.nextInt(300) == 0)
 				{
-					this.entity.world.triggerEffect(1010, block.getX(), block.getY(), block.getZ(), 0);
+					this.entity.world.triggerEffect(1010, new BlockPosition(block.getX(), block.getY(), block.getZ()), 0);
 				}
 
 				breakEnergy += breakSpeed;
@@ -235,7 +236,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 
 					if (i != this.j)
 					{
-						this.entity.world.d(this.entity.getId(), block.getX(), block.getY(), block.getZ(), i);
+						this.entity.world.c(this.entity.getId(), new BlockPosition(block.getX(), block.getY(), block.getZ()), i);
 						this.j = i;
 					}
 
@@ -244,9 +245,8 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal
 						this.i = 0;
 						Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(block));
 						block.setType(Material.AIR);
-						this.entity.world.triggerEffect(1012, block.getX(), block.getY(), block.getZ(), 0);
-						this.entity.world.triggerEffect(2001, block.getX(), block.getY(), block.getZ(),
-								this.entity.world.getType(block.getX(), block.getY(), block.getZ()).b());
+						this.entity.world.triggerEffect(1012, new BlockPosition(block.getX(), block.getY(), block.getZ()), 0);
+						this.entity.world.triggerEffect(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()), net.minecraft.server.v1_8_R1.Block.getId(this.entity.world.getType(new BlockPosition(block.getX(), block.getY(), block.getZ())).getBlock()));
 						block = null;
 					}
 				}

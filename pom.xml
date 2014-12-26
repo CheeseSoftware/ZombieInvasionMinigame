@@ -4,7 +4,7 @@
   <artifactId>ZombieInvasionMinigame</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
@@ -28,6 +28,14 @@
 	</build>
 
 	<repositories>
+		<repository>
+			<id>lasagne-repo</id>
+			<url>http://lasagne.tgnmc.com:8081/nexus/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+		</repository>
 		<repository>
 			<id>md_5-repo</id>
 			<url>http://repo.md-5.net/content/groups/public/</url>
@@ -62,14 +70,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>LATEST</version>
+          	<groupId>org.spigotmc</groupId>
+          	<artifactId>spigot-api</artifactId>
+          	<version>1.8-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>LATEST</version>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8-R0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.8-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sk89q</groupId>
@@ -77,7 +90,7 @@
 			<version>5.6.2</version>
 		</dependency>
 		<dependency>
-			<groupId>ostkaka34</groupId>
+			<groupId>com.github.cheesesoftware</groupId>
 			<artifactId>OstEconomyPlugin</artifactId>
 			<version>0</version>
 			<scope>system</scope>
