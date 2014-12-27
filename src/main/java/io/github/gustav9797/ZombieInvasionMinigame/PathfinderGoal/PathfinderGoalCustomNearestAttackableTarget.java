@@ -7,6 +7,7 @@ import io.github.gustav9797.State.PlayingState;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 import net.minecraft.server.v1_8_R1.EntityCreature;
 import net.minecraft.server.v1_8_R1.EntityLiving;
@@ -58,7 +59,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 			if (closestPlayer != null)
 			{
 				this.target = ((CraftPlayer) closestPlayer).getHandle();
-				this.entity.setGoalTarget(target);
+				this.entity.setGoalTarget(target, TargetReason.CLOSEST_ENTITY, false);
 				// this.entity.target = this.target;
 				return true;
 			}
@@ -68,7 +69,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 
 	public void c() // setup
 	{
-		this.entity.setGoalTarget(this.target);
+	    	this.entity.setGoalTarget(target, TargetReason.CLOSEST_ENTITY, false);
 		super.c();
 	}
 }
