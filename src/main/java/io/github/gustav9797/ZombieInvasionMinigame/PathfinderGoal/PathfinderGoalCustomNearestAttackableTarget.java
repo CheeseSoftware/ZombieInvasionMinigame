@@ -54,7 +54,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 		this.target = ((CraftPlayer) closestPlayer).getHandle();
 		Field f;
 		try {
-		    f = ((EntityLiving)this.entity).getClass().getField("goalTarget");
+		    f = ((EntityLiving)this.entity).getClass().getDeclaredField("goalTarget");
 		    f.setAccessible(true);
 		    f.set(this.entity, target);
 		} catch (Exception e) {
