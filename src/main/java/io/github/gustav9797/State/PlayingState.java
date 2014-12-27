@@ -329,7 +329,7 @@ public class PlayingState extends ArenaState
 																										// invisibility
 			}						// 1
 			else {
-				ostkaka34.OstEconomyPlugin.OstEconomyPlugin economyPlugin = ZombieInvasionMinigame.getEconomyPlugin();
+				OstEconomyPlugin economyPlugin = ZombieInvasionMinigame.getEconomyPlugin();
 				economyPlugin.GiveXP(player, 5 + this.currentWave);
 			}
 		}
