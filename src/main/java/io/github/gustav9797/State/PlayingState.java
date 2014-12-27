@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.server.v1_8_R1.EntityCreature;
@@ -93,7 +95,7 @@ public class PlayingState extends ArenaState
 	private int ticksUntilNextWave = -1;
 	private int ticksSinceLastWave = -1;
 
-	private List<Player> spectators = new ArrayList<Player>();
+	private Set<Player> spectators = new HashSet<Player>();
 	private ArenaScoreboard scoreboard;
 	private List<BorderBlock> border = new ArrayList<BorderBlock>();
 
@@ -298,31 +300,37 @@ public class PlayingState extends ArenaState
 
 	public void ResetSpectators()
 	{
-		List<Player> tempspectators = new ArrayList<Player>(this.spectators);
-		for (Player player : tempspectators)
+		Set<Player> tempspectators = this.spectators;
+		this.spectators = new HashSet<Player>();
+		for (Player player : players)
 		{
-			this.SetAlive(player);
-			player.teleport(this.getSpawnLocation());
-			player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 30, 2)); // 30s
-																								// absorption
-																								// 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 30, 2)); // 30s
-																										// damage
+			if (tempspectators.contains(player)) {
+				this.SetAlive(player);
+				player.teleport(this.getSpawnLocation());
+				player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 30, 2)); // 30s
+																									// absorption
+																									// 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 30, 2)); // 30s
+																											// damage
+																											// resistance
+																											// 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 10, 1)); // 10s
+																										// fire
 																										// resistance
-																										// 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 10, 1)); // 10s
-																									// fire
-																									// resistance
-																									// 1
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 10, 1)); // 10s
-																							// speed
-																							// 1
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20 * 30, 2)); // 30s
-																							// jump
-																							// 2
-			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 10, 1)); // 10s
-																									// invisibility
-																									// 1
+																										// 1
+				player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 10, 1)); // 10s
+																								// speed
+																								// 1
+				player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 20 * 30, 2)); // 30s
+																								// jump
+																								// 2
+				player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 10, 1)); // 10s
+																										// invisibility
+			}						// 1
+			else {
+				ostkaka34.OstEconomyPlugin.OstEconomyPlugin economyPlugin = ZombieInvasionMinigame.getEconomyPlugin();
+				economyPlugin.GiveXP(player, 5 + this.currentWave);
+			}
 		}
 		spectators.clear();
 		tempspectators.clear();
@@ -393,7 +401,7 @@ public class PlayingState extends ArenaState
 
 	public void RemoveSpectator(Player player)
 	{
-		while (spectators.contains(player))
+		if (spectators.contains(player))
 			spectators.remove(player);
 		for (Player p : players)
 			p.showPlayer(player);
