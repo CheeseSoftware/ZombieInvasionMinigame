@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 import net.minecraft.server.v1_8_R1.EntityCreature;
+import net.minecraft.server.v1_8_R1.EntityInsentient;
 import net.minecraft.server.v1_8_R1.EntityLiving;
 
 public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalCustomTarget {
@@ -54,7 +55,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 		this.target = ((CraftPlayer) closestPlayer).getHandle();
 		Field f;
 		try {
-		    f = ((EntityLiving)this.entity).getClass().getDeclaredField("goalTarget");
+		    f = ((EntityInsentient)this.entity).getClass().getDeclaredField("goalTarget");
 		    f.setAccessible(true);
 		    f.set(this.entity, target);
 		} catch (Exception e) {
