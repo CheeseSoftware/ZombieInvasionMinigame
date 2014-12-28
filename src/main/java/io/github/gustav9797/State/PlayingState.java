@@ -86,6 +86,7 @@ public class PlayingState extends ArenaState {
     private Random r = new Random();
     private World world;
     private boolean restarting = false;
+    private boolean maintenace = false;
 
     private int sendWavesTaskId = -1;
     private int tickTaskId = -1;
@@ -210,6 +211,7 @@ public class PlayingState extends ArenaState {
     }
 
     public void StopAllActivity() {
+	this.maintenace = true;
 	BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 	if (this.tickTaskId != -1)
 	    scheduler.cancelTask(tickTaskId);
@@ -729,50 +731,55 @@ public class PlayingState extends ArenaState {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-	this.JoinPlayer(event.getPlayer());
+	if (!this.maintenace)
+	    this.JoinPlayer(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-	if (players.contains(event.getPlayer())) {
-	    RemovePlayer(event.getPlayer(), "quit");
+	if (!this.maintenace) {
+	    if (players.contains(event.getPlayer())) {
+		RemovePlayer(event.getPlayer(), "quit");
+	    }
 	}
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-	Player player = event.getEntity();
-	if (players.contains(player)) {
-	    event.getDrops().clear();
-	    if (this.isRunning() && !this.isStarting()) {
-		if (this.spectators.size() + 1 >= this.players.size())
-		    Restart("Everyone have died. Restarting..");
-		else {
-		    CraftZombie zombie;
+	if (!this.maintenace) {
+	    Player player = event.getEntity();
+	    if (players.contains(player)) {
+		event.getDrops().clear();
+		if (this.isRunning() && !this.isStarting()) {
+		    if (this.spectators.size() + 1 >= this.players.size())
+			Restart("Everyone have died. Restarting..");
+		    else {
+			CraftZombie zombie;
 
-		    net.minecraft.server.v1_8_R1.World mcWorld = ((CraftWorld) this.world).getHandle();
-		    EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
-		    ((EntityBlockBreakingZombie) monster).setPlayingState(this);
+			net.minecraft.server.v1_8_R1.World mcWorld = ((CraftWorld) this.world).getHandle();
+			EntityCreature monster = new EntityBlockBreakingZombie(mcWorld);
+			((EntityBlockBreakingZombie) monster).setPlayingState(this);
 
-		    ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
-		    skull.setDurability((short) 3);
-		    SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		    skullMeta.setOwner(player.getName());
-		    skullMeta.setDisplayName(player.getName() + "'s head");
-		    skull.setItemMeta(skullMeta);
+			ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1);
+			skull.setDurability((short) 3);
+			SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+			skullMeta.setOwner(player.getName());
+			skullMeta.setDisplayName(player.getName() + "'s head");
+			skull.setItemMeta(skullMeta);
 
-		    zombie = (CraftZombie) monster.getBukkitEntity();
+			zombie = (CraftZombie) monster.getBukkitEntity();
 
-		    zombie.getEquipment().setHelmet(skull);
-		    zombie.setCustomName(player.getName());
-		    zombie.setCustomNameVisible(true);
-		    zombie.setCanPickupItems(true);
+			zombie.getEquipment().setHelmet(skull);
+			zombie.setCustomName(player.getName());
+			zombie.setCustomNameVisible(true);
+			zombie.setCanPickupItems(true);
 
-		    this.monsters.put(zombie.getUniqueId(), monster);
-		    monster.getBukkitEntity().teleport(player.getLocation());
-		    mcWorld.addEntity(monster, SpawnReason.CUSTOM);
+			this.monsters.put(zombie.getUniqueId(), monster);
+			monster.getBukkitEntity().teleport(player.getLocation());
+			mcWorld.addEntity(monster, SpawnReason.CUSTOM);
 
-		    this.MakeSpectator(player);
+			this.MakeSpectator(player);
+		    }
 		}
 	    }
 	}
