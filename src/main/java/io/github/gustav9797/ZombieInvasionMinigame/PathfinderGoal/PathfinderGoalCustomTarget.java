@@ -5,11 +5,13 @@ import java.util.Random;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 
+import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.EntityCreature;
 import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.EntityLiving;
 import net.minecraft.server.v1_8_R1.EntityOwnable;
 import net.minecraft.server.v1_8_R1.EntityPlayer;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
 import net.minecraft.server.v1_8_R1.MathHelper;
 import net.minecraft.server.v1_8_R1.PathEntity;
 import net.minecraft.server.v1_8_R1.PathPoint;
@@ -65,10 +67,10 @@ public abstract class PathfinderGoalCustomTarget extends PathfinderGoal {
     }
 
     protected double f() {
-	// AttributeInstance attributeinstance = this.entity.getAttributeInstance(GenericAttributes.b);
+	AttributeInstance attributeinstance = this.entity.getAttributeInstance(GenericAttributes.b);
 
-	// return attributeinstance == null ? 16.0D : attributeinstance.getValue();
-	return 128;
+	return attributeinstance == null ? 16.0D : attributeinstance.getValue();
+	//return 128;
     }
 
     public void c() // setup

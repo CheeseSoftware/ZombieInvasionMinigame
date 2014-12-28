@@ -33,7 +33,7 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 
 		try
 		{
-			Field field = NavigationAbstract.class.getDeclaredField("e");
+			Field field = NavigationAbstract.class.getDeclaredField("a");
 			field.setAccessible(true);
 			AttributeInstance e = (AttributeInstance) field.get(this.getNavigation());
 			e.setValue(128); // Navigation distance in block lengths goes here
