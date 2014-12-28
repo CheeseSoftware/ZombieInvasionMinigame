@@ -27,7 +27,7 @@ public class ArenaMap
 	public Location spawnLocation = new Location(null, 0, 80, 0, 0, 0);
 	public int startAtPlayerCount = 1;
 	public int secondsBeforeStart = 60;
-	public int secondsWaitFirstTimeStart = 30;
+	public int secondsWaitFirstTimeStart = 3;
 	// config.yml end
 
 	// border.yml start
@@ -115,7 +115,7 @@ public class ArenaMap
 			this.spawnLocation = spawnPos.toLocation(null, (float) config.getDouble("spawnLocationYaw"), (float) config.getDouble("SpawnLocationPitch"));
 			this.startAtPlayerCount = config.getInt("startAtPlayerCount");
 			this.secondsBeforeStart = config.getInt("secondsBeforeStart");
-			this.secondsWaitFirstTimeStart = config.getInt("secondsWaitFirstTimeStart");
+			//this.secondsWaitFirstTimeStart = config.getInt("secondsWaitFirstTimeStart");
 		}
 		catch (IOException | InvalidConfigurationException e)
 		{
