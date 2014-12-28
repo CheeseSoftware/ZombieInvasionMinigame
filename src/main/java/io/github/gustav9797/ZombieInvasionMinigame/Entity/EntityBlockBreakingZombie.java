@@ -13,6 +13,7 @@ import net.minecraft.server.v1_8_R1.AttributeInstance;
 import net.minecraft.server.v1_8_R1.EntityHuman;
 import net.minecraft.server.v1_8_R1.EntityZombie;
 import net.minecraft.server.v1_8_R1.Navigation;
+import net.minecraft.server.v1_8_R1.NavigationAbstract;
 import net.minecraft.server.v1_8_R1.PathfinderGoalFloat;
 import net.minecraft.server.v1_8_R1.PathfinderGoalHurtByTarget;
 import net.minecraft.server.v1_8_R1.PathfinderGoalLookAtPlayer;
@@ -32,13 +33,14 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
 
 		try
 		{
-			Field field = Navigation.class.getDeclaredField("e");
+			Field field = NavigationAbstract.class.getDeclaredField("e");
 			field.setAccessible(true);
 			AttributeInstance e = (AttributeInstance) field.get(this.getNavigation());
 			e.setValue(128); // Navigation distance in block lengths goes here
 		}
 		catch (Exception ex)
 		{
+		    ex.printStackTrace();
 		}
 
 		try
