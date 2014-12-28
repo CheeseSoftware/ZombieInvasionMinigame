@@ -1,172 +1,110 @@
 package com.github.cheesesoftware.ZombieInvasionMinigame.PathfinderGoal;
 
-import java.util.Random;
-
-import org.bukkit.Location;
-
 import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.DamageSource;
 import net.minecraft.server.v1_8_R1.Entity;
 import net.minecraft.server.v1_8_R1.EntityCreature;
 import net.minecraft.server.v1_8_R1.EntityLiving;
-import net.minecraft.server.v1_8_R1.MathHelper;
 import net.minecraft.server.v1_8_R1.PathEntity;
 import net.minecraft.server.v1_8_R1.PathfinderGoal;
 import net.minecraft.server.v1_8_R1.World;
 
-public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal
-{
+public class PathfinderGoalCustomMeleeAttack extends PathfinderGoal {
 
-	World a;
-	EntityCreature entityCreature;
-	int c;
-	double d;
-	boolean e;
-	PathEntity pathEntity;
-	@SuppressWarnings("rawtypes")
-	Class g;
-	private int h;
-	private double locX;
-	private double locY;
-	private double locZ;
-	// private int ticksPassed = 0;
-	// private int ticksMin = 40;
-	private Random r = new Random();
+    World a;
+    protected EntityCreature b;
+    int c;
+    double d;
+    boolean e;
+    PathEntity f;
+    @SuppressWarnings("rawtypes")
+    Class g;
+    private int h;
+    private double i;
+    private double j;
+    private double k;
 
-	private Location targetLocation = null;
-	private Location targetOldLocation = null;
+    public PathfinderGoalCustomMeleeAttack(EntityCreature entitycreature, @SuppressWarnings("rawtypes") Class oclass, double d0, boolean flag) {
+	this(entitycreature, d0, flag);
+	this.g = oclass;
+    }
 
-	@SuppressWarnings("rawtypes")
-	public PathfinderGoalCustomMeleeAttack(EntityCreature entitycreature, Class oclass, double d0, boolean flag)
-	{
-		this(entitycreature, d0, flag);
-		this.g = oclass;
+    public PathfinderGoalCustomMeleeAttack(EntityCreature entitycreature, double d0, boolean flag) {
+	this.b = entitycreature;
+	this.a = entitycreature.world;
+	this.d = d0;
+	this.e = flag;
+	this.a(3);
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean a() {
+	EntityLiving entityliving = this.b.getGoalTarget();
+
+	if (entityliving == null) {
+	    return false;
+	} else if (!entityliving.isAlive()) {
+	    return false;
+	} else if (this.g != null && !this.g.isAssignableFrom(entityliving.getClass())) {
+	    return false;
+	} else {
+	    this.f = this.b.getNavigation().a((Entity) entityliving);
+	    return this.f != null;
+	}
+    }
+
+    public boolean b() {
+	EntityLiving entityliving = this.b.getGoalTarget();
+
+	return entityliving == null ? false : (!entityliving.isAlive() ? false : (!this.e ? !this.b.getNavigation().m() : this.b.d(new BlockPosition(entityliving))));
+    }
+
+    public void c() {
+	this.b.getNavigation().a(this.f, this.d);
+	this.h = 0;
+    }
+
+    public void d() {
+	this.b.getNavigation().n();
+    }
+
+    public void e() {
+	EntityLiving entityliving = this.b.getGoalTarget();
+
+	this.b.getControllerLook().a(entityliving, 30.0F, 30.0F);
+	double d0 = this.b.e(entityliving.locX, entityliving.getBoundingBox().b, entityliving.locZ);
+	double d1 = this.a(entityliving);
+
+	--this.h;
+	if ((this.e || this.b.getEntitySenses().a(entityliving)) && this.h <= 0
+		&& (this.i == 0.0D && this.j == 0.0D && this.k == 0.0D || entityliving.e(this.i, this.j, this.k) >= 1.0D || this.b.bb().nextFloat() < 0.05F)) {
+	    this.i = entityliving.locX;
+	    this.j = entityliving.getBoundingBox().b;
+	    this.k = entityliving.locZ;
+	    this.h = 4 + this.b.bb().nextInt(7);
+	    if (d0 > 1024.0D) {
+		this.h += 10;
+	    } else if (d0 > 256.0D) {
+		this.h += 5;
+	    }
+
+	    if (!this.b.getNavigation().a((Entity) entityliving, this.d)) {
+		this.h += 15;
+	    }
 	}
 
-	public PathfinderGoalCustomMeleeAttack(EntityCreature entitycreature, double d0, boolean flag)
-	{
-		this.entityCreature = entitycreature;
-		this.a = entitycreature.world;
-		this.d = d0;
-		this.e = flag;
-		this.a(3);
+	this.c = Math.max(this.c - 1, 0);
+	if (d0 <= d1 && this.c <= 0) {
+	    this.c = 20;
+	    if (this.b.bz() != null) {
+		this.b.bv();
+	    }
+
+	    this.b.r(entityliving);
 	}
 
-	private boolean hasTarget()
-	{
-		return this.entityCreature.getGoalTarget() != null && this.entityCreature.getGoalTarget().isAlive();
-	}
+    }
 
-	private boolean hasTargetMoved()
-	{
-		return this.targetLocation == null || this.targetOldLocation == null || this.targetLocation.getBlockX() != this.targetOldLocation.getBlockX() || this.targetLocation.getBlockY() != this.targetOldLocation.getBlockY()
-				|| this.targetLocation.getBlockZ() != this.targetOldLocation.getBlockZ();
-	}
-
-	private boolean hasPathToWalk()
-	{
-		boolean bla = !this.entityCreature.getNavigation().m();
-		return bla;
-	}
-
-	@SuppressWarnings("unchecked")
-	public boolean a()
-	{
-		if (!this.hasPathToWalk())
-		{
-			EntityLiving entityliving = this.entityCreature.getGoalTarget();
-
-			if (entityliving == null)
-			{
-				return false;
-			}
-			else if (!entityliving.isAlive())
-			{
-				return false;
-			}
-			else if (this.g != null && !this.g.isAssignableFrom(entityliving.getClass()))
-			{
-				return false;
-			}
-			else
-			{
-				this.pathEntity = this.entityCreature.getNavigation().a(entityliving);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean b() // canContinue
-	{
-		EntityLiving entityliving = this.entityCreature.getGoalTarget();
-
-		return entityliving == null ? false : (!entityliving.isAlive() ? false : (!this.e ? !this.entityCreature.getNavigation().m() : this.entityCreature.d(new BlockPosition(MathHelper.floor(entityliving.locX),
-				MathHelper.floor(entityliving.locY), MathHelper.floor(entityliving.locZ)))));
-	}
-
-	public void c() // setup
-	{
-		this.entityCreature.getNavigation().a(this.pathEntity, this.d);
-		this.h = 0;
-	}
-
-	public void d() // finish
-	{
-		this.entityCreature.getNavigation().m(); // .end(), .stop()
-	}
-
-	public void e() // move
-	{
-		EntityLiving entityliving = this.entityCreature.getGoalTarget();
-		this.targetOldLocation = this.targetLocation;
-		this.targetLocation = entityliving.getBukkitEntity().getLocation();
-
-		this.entityCreature.getControllerLook().a(entityliving, 30.0F, 30.0F);
-		double d0 = this.entityCreature.e(entityliving.locX, entityliving.getBoundingBox().b, entityliving.locZ);
-		double d1 = (double) (this.entityCreature.width * 2.0F * this.entityCreature.width * 2.0F + entityliving.width);
-
-		--this.h;
-		if ((this.e || this.entityCreature.getEntitySenses().a(entityliving)) && this.h <= 0
-				&& (this.locX == 0.0D && this.locY == 0.0D && this.locZ == 0.0D || entityliving.e(this.locX, this.locY, this.locZ) >= 1.0D || r.nextFloat() < 0.05F))
-		{
-			this.locX = entityliving.locX;
-			this.locY = entityliving.getBoundingBox().b;
-			this.locZ = entityliving.locZ;
-			this.h = 4 + r.nextInt(7);
-			if (d0 > 1024.0D)
-			{
-				this.h += 10;
-			}
-			else if (d0 > 256.0D)
-			{
-				this.h += 5;
-			}
-			if (!this.hasTargetMoved())
-				h += 15;
-
-			if (this.hasTargetMoved() || (this.hasTarget() && !this.hasPathToWalk()))
-			{
-				if (!this.entityCreature.getNavigation().a((Entity) entityliving, this.d))
-				{
-					this.h += 15;
-				}
-			}
-			/*
-			 * if(this.entityCreature.getBukkitEntity().getWorld().getBlockAt(this
-			 * .
-			 * entityCreature.getBukkitEntity().getLocation()).getRelative(BlockFace
-			 * .DOWN).getType() == Material.AIR) { this.h += 15; }
-			 */
-		}
-
-		this.c = Math.max(this.c - 1, 0);
-		if (d0 <= d1 && this.c <= 20)
-		{
-			this.c = 20;
-
-			this.entityCreature.m(entityliving);
-			this.entityCreature.getGoalTarget().damageEntity(DamageSource.a(this.entityCreature), (float) this.d);
-		}
-	}
+    protected double a(EntityLiving entityliving) {
+	return (double) (this.b.width * 2.0F * this.b.width * 2.0F + entityliving.width);
+    }
 }
