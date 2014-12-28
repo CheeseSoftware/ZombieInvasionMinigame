@@ -60,7 +60,7 @@ public class PathfinderGoalCustomNearestAttackableTarget extends PathfinderGoalC
 
     public void c() // setup
     {
-	this.entity.setGoalTarget(target, TargetReason.CLOSEST_ENTITY, true);
+	this.entity.setGoalTarget(target, TargetReason.CLOSEST_ENTITY, false);
 	super.c();
     }
 }
