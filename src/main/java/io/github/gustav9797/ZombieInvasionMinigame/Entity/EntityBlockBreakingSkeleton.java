@@ -6,9 +6,7 @@ import io.github.gustav9797.ZombieInvasionMinigame.PathfinderGoal.PathfinderGoal
 
 import java.lang.reflect.Field;
 import java.util.Random;
-import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R1.util.UnsafeList;
 
 import net.minecraft.server.v1_8_R1.AttributeInstance;
