@@ -1,5 +1,5 @@
 name: ZombieInvasionMinigame
-main: io.github.gustav9797.ZombieInvasionMinigame.ZombieInvasionMinigame
+main: com.github.cheesesoftware.ZombieInvasionMinigame.ZombieInvasionMinigame
 version: 0.1
 softdepend: [OstEconomyPlugin, WorldEdit]
 load: POSTWORLD
