@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,6 +13,7 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.event.block.LeavesDecayEvent;
 
+import com.github.cheesesoftware.BetterBlockBreaking.BetterBlockBreaking;
 import com.github.cheesesoftware.State.PlayingState;
 
 import net.minecraft.server.v1_8_R1.BlockPosition;
@@ -32,7 +32,6 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal {
     boolean isBreaking = false;
     boolean isWalking = false;
     Block currentBlock = null;
-    int currentBlockDamage = 0;
     int ticksPassed = 0;
     boolean blockBroken = false;
     boolean couldNotWalkToBlock = false;
@@ -72,7 +71,6 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal {
 	super.c();
 	currentBlock = getRandomCloseBlock();
 	if (currentBlock != null) {
-	    currentBlockDamage = 0;
 	    ticksStoodStill = 0;
 	    isBreaking = true;
 	    this.couldNotWalkToBlock = false;
@@ -98,105 +96,83 @@ public class PathfinderGoalFindBreakBlock extends PathfinderGoal {
     }
 
     @Override
-	public void e() // move
-	{
-		Location currentLocation = this.entity.getBukkitEntity().getLocation();
-		if (isWalking)
-		{
-			if (this.oldLocation == null)
-			{
-				this.oldLocation = currentLocation;
-				return;
-			}
-			if (currentLocation.getBlockX() == oldLocation.getBlockX() && currentLocation.getBlockY() == oldLocation.getBlockY() && currentLocation.getBlockZ() == oldLocation.getBlockZ())
-			{
-				this.ticksStoodStill++;
-				if (this.ticksStoodStill > 30)
-				{
-					if (currentBlock == null || this.getDistanceBetween(this.currentBlock.getLocation(), currentLocation) <= 2.5F)
-						this.isWalking = false;
-					else
-					{
-						this.couldNotWalkToBlock = true;
-						this.isBreaking = false;
-						currentBlockDamage = 0;
-						ticksStoodStill = 0;
-						this.blocksNotWalkable.add(currentBlock);
-						this.currentBlock = null;
-						return;
-					}
-					this.ticksStoodStill = 0;
-					return;
-				}
-			}
-		}
-		if (!isWalking)
-		{
-			if (currentBlock == null && !isBreaking)
-			{
-				currentBlock = getRandomCloseBlock();
-				if (currentBlock != null)
-				{
-					currentBlockDamage = 0;
-					ticksStoodStill = 0;
-					isBreaking = true;
-					blockBroken = false;
-					if (currentBlock != null)
-					{
-						Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
-
-						boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
-						if (foundPath)
-						{
-							this.isWalking = true;
-							return;
-						}
-					}
-				}
-			}
-
-			if (currentBlock != null && this.isBreaking && currentBlock.getType() != Material.AIR)
-			{
-				currentBlockDamage += this.blockDamageIncrease;
-				if (r.nextInt(300) == 0)
-					this.entity.world.triggerEffect(1010, new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), 0);
-				int i = (int) ((float) this.currentBlockDamage / 240.0F * 10.0F);
-				//this.entity.world.(entity.getId(), new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), i);
-				
-				BlockPosition pos = new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ());
-				((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 120, 
-					((CraftWorld)currentBlock.getWorld()).getHandle().dimension, new PacketPlayOutBlockBreakAnimation(entity.getId(), pos, i));
-				
-				if (currentBlockDamage >= 240)
-				{
-					currentBlock.setType(Material.AIR);
-					entity.world.getWorld().playEffect(currentBlock.getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1);
-					Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(this.currentBlock));
-
-					this.blocksNotWalkable.clear();
-					currentBlock = null;
-					isBreaking = false;
-					this.blockBroken = true;
-					currentBlockDamage = 0;
-				}
-			}
-			else
-			{
-				if (this.currentBlock != null)
-				{
-				    //this.entity.world.d(entity.getId(), currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 0);
-				    BlockPosition pos = new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ());
-				    ((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 120, 
-					    ((CraftWorld)currentBlock.getWorld()).getHandle().dimension, new PacketPlayOutBlockBreakAnimation(entity.getId(), pos, 0));
-				}
-				currentBlock = null;
-				isBreaking = false;
-				this.blockBroken = true;
-				currentBlockDamage = 0;
-			}
-		}
+    public void e() // move
+    {
+	Location currentLocation = this.entity.getBukkitEntity().getLocation();
+	if (isWalking) {
+	    if (this.oldLocation == null) {
 		this.oldLocation = currentLocation;
+		return;
+	    }
+	    if (currentLocation.getBlockX() == oldLocation.getBlockX() && currentLocation.getBlockY() == oldLocation.getBlockY() && currentLocation.getBlockZ() == oldLocation.getBlockZ()) {
+		this.ticksStoodStill++;
+		if (this.ticksStoodStill > 30) {
+		    if (currentBlock == null || this.getDistanceBetween(this.currentBlock.getLocation(), currentLocation) <= 2.5F)
+			this.isWalking = false;
+		    else {
+			this.couldNotWalkToBlock = true;
+			this.isBreaking = false;
+			ticksStoodStill = 0;
+			this.blocksNotWalkable.add(currentBlock);
+			this.currentBlock = null;
+			return;
+		    }
+		    this.ticksStoodStill = 0;
+		    return;
+		}
+	    }
 	}
+	if (!isWalking) {
+	    if (currentBlock == null && !isBreaking) {
+		currentBlock = getRandomCloseBlock();
+		if (currentBlock != null) {
+		    ticksStoodStill = 0;
+		    isBreaking = true;
+		    blockBroken = false;
+		    if (currentBlock != null) {
+			Location temp = new Location(this.entity.getBukkitEntity().getWorld(), currentBlock.getX() + 0.5F, currentBlock.getY() + 0.5F, currentBlock.getZ() + 0.5F);
+
+			boolean foundPath = this.entity.getNavigation().a(temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), 1);
+			if (foundPath) {
+			    this.isWalking = true;
+			    return;
+			}
+		    }
+		}
+	    }
+
+	    if (currentBlock != null && this.isBreaking && currentBlock.getType() != Material.AIR) {
+		if (r.nextInt(300) == 0) {
+		    this.entity.world.triggerEffect(1010, new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), 0);
+		}
+
+		float totalDamage = BetterBlockBreaking.getPlugin().getDamageBlock(currentBlock.getLocation()).getDamage() + (this.blockDamageIncrease / 240.0F * 10.0F);
+		BetterBlockBreaking.getPlugin().getDamageBlock(currentBlock.getLocation()).setDamage(totalDamage, null);
+
+		if (totalDamage > 10) {
+		    Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(currentBlock));
+		    this.entity.world.triggerEffect(1012, new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()), 0);
+		    this.entity.world.triggerEffect(2001, new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ()),
+			    net.minecraft.server.v1_8_R1.Block.getId(this.entity.world.getType(new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ())).getBlock()));
+
+		    this.blocksNotWalkable.clear();
+		    currentBlock = null;
+		    isBreaking = false;
+		    this.blockBroken = true;
+		}
+	    } else {
+		if (this.currentBlock != null) {
+		    BlockPosition pos = new BlockPosition(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ());
+		    ((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(currentBlock.getX(), currentBlock.getY(), currentBlock.getZ(), 120,
+			    ((CraftWorld) currentBlock.getWorld()).getHandle().dimension, new PacketPlayOutBlockBreakAnimation(entity.getId(), pos, 0));
+		}
+		currentBlock = null;
+		isBreaking = false;
+		this.blockBroken = true;
+	    }
+	}
+	this.oldLocation = currentLocation;
+    }
 
     public boolean CanFindABlock() {
 	List<Block> blocks = this.getCloseBlocks();

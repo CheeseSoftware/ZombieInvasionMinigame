@@ -1,7 +1,7 @@
 name: ZombieInvasionMinigame
 main: com.github.cheesesoftware.ZombieInvasionMinigame.ZombieInvasionMinigame
 version: 0.1
-softdepend: [OstEconomyPlugin, WorldEdit]
+softdepend: [BetterBlockBreaking, OstEconomyPlugin, WorldEdit]
 load: POSTWORLD
 commands:
    vote:
