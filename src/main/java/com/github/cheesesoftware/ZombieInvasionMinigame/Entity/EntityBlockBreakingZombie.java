@@ -41,14 +41,21 @@ public class EntityBlockBreakingZombie extends EntityZombie implements ICustomMo
         }
 
         try {
-            Field b = PathfinderGoalSelector.class.getDeclaredField("b");
-            b.setAccessible(true);
-            Set blist = (Set) b.get(this.goalSelector);
-            blist.clear();
-            
-            //gsa.set(this.goalSelector, new UnsafeList<Object>());
-            //gsa.set(this.targetSelector, new UnsafeList<Object>());
-            
+
+            {
+                Field b = PathfinderGoalSelector.class.getDeclaredField("b");
+                b.setAccessible(true);
+                Set blist = (Set) b.get(this.goalSelector);
+                blist.clear();
+            }
+
+            {
+                Field c = PathfinderGoalSelector.class.getDeclaredField("c");
+                c.setAccessible(true);
+                Set blist = (Set) c.get(this.goalSelector);
+                blist.clear();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ package com.github.cheesesoftware.ZombieInvasionMinigame.Entity;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.server.v1_10_R1.AttributeInstance;
 import net.minecraft.server.v1_10_R1.EntityHuman;
@@ -38,15 +39,19 @@ public class EntityBossWither extends EntityWither implements ICustomMonster {
         }
 
         try {
-            Field gsa = PathfinderGoalSelector.class.getDeclaredField("b");
-            gsa.setAccessible(true);
-            
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(gsa, gsa.getModifiers() & ~Modifier.FINAL);
-            
-            gsa.set(this.goalSelector, new UnsafeList<Object>());
-            gsa.set(this.targetSelector, new UnsafeList<Object>());
+            {
+                Field b = PathfinderGoalSelector.class.getDeclaredField("b");
+                b.setAccessible(true);
+                Set blist = (Set) b.get(this.goalSelector);
+                blist.clear();
+            }
+
+            {
+                Field c = PathfinderGoalSelector.class.getDeclaredField("c");
+                c.setAccessible(true);
+                Set blist = (Set) c.get(this.goalSelector);
+                blist.clear();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
