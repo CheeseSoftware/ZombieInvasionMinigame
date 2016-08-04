@@ -9,11 +9,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.server.v1_8_R1.BlockPosition;
-import net.minecraft.server.v1_8_R1.EntityCreature;
-import net.minecraft.server.v1_8_R1.EntityInsentient;
-import net.minecraft.server.v1_8_R1.PathfinderGoal;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,6 +19,11 @@ import org.bukkit.util.Vector;
 
 import com.github.cheesesoftware.BetterBlockBreaking.BetterBlockBreaking;
 import com.github.cheesesoftware.State.PlayingState;
+
+import net.minecraft.server.v1_10_R1.BlockPosition;
+import net.minecraft.server.v1_10_R1.EntityCreature;
+import net.minecraft.server.v1_10_R1.EntityInsentient;
+import net.minecraft.server.v1_10_R1.PathfinderGoal;
 
 public class PathfinderGoalBreakBlock extends PathfinderGoal {
     float g;
@@ -219,7 +219,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal {
 			Bukkit.getPluginManager().callEvent(new LeavesDecayEvent(block));
 			this.entity.world.triggerEffect(1012, new BlockPosition(block.getX(), block.getY(), block.getZ()), 0);
 			this.entity.world.triggerEffect(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()),
-				net.minecraft.server.v1_8_R1.Block.getId(this.entity.world.getType(new BlockPosition(block.getX(), block.getY(), block.getZ())).getBlock()));
+				net.minecraft.server.v1_10_R1.Block.getId(this.entity.world.getType(new BlockPosition(block.getX(), block.getY(), block.getZ())).getBlock()));
 			block = null;
 		    }
 		}
@@ -235,7 +235,7 @@ public class PathfinderGoalBreakBlock extends PathfinderGoal {
 		 * 
 		 * if (totalDamage > 10) { this.i = 0; BetterBlockBreaking.getPlugin().getDamageBlock(block.getLocation()).breakBlock(null); Bukkit.getPluginManager().callEvent(new
 		 * LeavesDecayEvent(block)); // block.setType(Material.AIR); this.entity.world.triggerEffect(1012, new BlockPosition(block.getX(), block.getY(), block.getZ()), 0);
-		 * this.entity.world.triggerEffect(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()), net.minecraft.server.v1_8_R1.Block.getId(this.entity.world.getType(new
+		 * this.entity.world.triggerEffect(2001, new BlockPosition(block.getX(), block.getY(), block.getZ()), net.minecraft.server.v1_8_R3.Block.getId(this.entity.world.getType(new
 		 * BlockPosition(block.getX(), block.getY(), block.getZ())).getBlock())); block = null; } }
 		 */
 	    }

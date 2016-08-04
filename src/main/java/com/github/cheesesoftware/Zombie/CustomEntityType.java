@@ -3,12 +3,12 @@ package com.github.cheesesoftware.Zombie;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import net.minecraft.server.v1_8_R1.EntityCreature;
-import net.minecraft.server.v1_8_R1.EntityTypes;
+import net.minecraft.server.v1_10_R1.EntityCreature;
+import net.minecraft.server.v1_10_R1.EntityTypes;
 
 import org.bukkit.entity.EntityType;
 
-public class CustomEntityType implements net.minecraft.server.v1_8_R1.IMonster
+public class CustomEntityType implements net.minecraft.server.v1_10_R1.IMonster
 {
 	// SKELETON("Skeleton", 51, EntityType.SKELETON, EntitySkeleton.class,
 	// CustomEntitySkeleton.class),
